@@ -24,13 +24,24 @@ export function useSpeech() {
 
             // Smart default: prioritize "Google", "Microsoft", or "Natural"
             // Only set output if no voice is currently selected or if the currently selected one is not available
-            if (germanVoices.length > 0 && !selectedVoice) {
-                // Better prioritization: Search for 'Google Deutsch' first, then 'Neural', then any Google, then first available
-                const preferred = germanVoices.find(v => v.name === 'Google Deutsch') ||
-                    germanVoices.find(v => v.name.includes('Neural')) ||
-                    germanVoices.find(v => v.name.includes('Google'));
+            // Try to restore from localStorage first, then use smart default
+            const savedVoiceName = localStorage.getItem('preferred_voice_de');
 
-                setSelectedVoice(preferred || germanVoices[0]);
+            if (germanVoices.length > 0 && !selectedVoice) {
+                let initialVoice = null;
+
+                if (savedVoiceName) {
+                    initialVoice = germanVoices.find(v => v.name === savedVoiceName);
+                }
+
+                if (!initialVoice) {
+                    // Smart default: prioritize "Google Deutsch", then "Neural", then any "Google"
+                    initialVoice = germanVoices.find(v => v.name === 'Google Deutsch') ||
+                        germanVoices.find(v => v.name.includes('Neural')) ||
+                        germanVoices.find(v => v.name.includes('Google'));
+                }
+
+                setSelectedVoice(initialVoice || germanVoices[0]);
             }
         };
 
@@ -154,7 +165,10 @@ export function useSpeech() {
         supported,
         voices,
         selectedVoice,
-        setSelectedVoice,
+        setSelectedVoice: (voice) => {
+            if (voice) localStorage.setItem('preferred_voice_de', voice.name);
+            setSelectedVoice(voice);
+        },
         error // Export error state
     };
 }
