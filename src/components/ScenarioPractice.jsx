@@ -11,6 +11,7 @@ export default function ScenarioPractice({
     completeScenario,
     addScore,
     user,
+    resetTranscript,
     error // Receive error
 }) {
     const [activeScenario, setActiveScenario] = useState(null);
@@ -65,10 +66,7 @@ export default function ScenarioPractice({
 
     const nextStep = () => {
         setFeedback(null);
-        // Important: clear transcript when moving to next step
-        // But we can't call it here easily as it's a prop... wait.
-        // The transcript comes from useSpeech. App.jsx should handle the reset if needed.
-        // Actually, startListening in ScenarioPractice already does setTranscript('') (it calls handleStartListening).
+        resetTranscript();
 
         if (currentStepIndex < activeScenario.steps.length - 1) {
             setCurrentStepIndex(prev => prev + 1);

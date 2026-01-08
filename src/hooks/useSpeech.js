@@ -155,6 +155,10 @@ export function useSpeech() {
         }
     }, []);
 
+    const resetTranscript = useCallback(() => {
+        setTranscript('');
+    }, []);
+
     return {
         isListening,
         transcript,
@@ -169,6 +173,7 @@ export function useSpeech() {
             if (voice) localStorage.setItem('preferred_voice_de', voice.name);
             setSelectedVoice(voice);
         },
+        resetTranscript,
         error // Export error state
     };
 }

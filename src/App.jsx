@@ -122,6 +122,7 @@ function App() {
               completeScenario={completeScenario}
               addScore={addScore}
               user={user}
+              resetTranscript={resetTranscript}
               error={error}
             />
           ) : (
