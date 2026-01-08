@@ -60,15 +60,11 @@ export function useSpeech() {
         recognitionRef.current.onend = () => setIsListening(false);
 
         recognitionRef.current.onresult = (event) => {
-            let finalTranscript = '';
+            let currentTranscript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript;
-                }
+                currentTranscript += event.results[i][0].transcript;
             }
-            if (finalTranscript) {
-                setTranscript(finalTranscript);
-            }
+            setTranscript(currentTranscript);
         };
 
         recognitionRef.current.onerror = (event) => {

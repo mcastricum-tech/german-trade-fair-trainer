@@ -42,14 +42,14 @@ export default function ScenarioPractice({
         if (!activeScenario) return;
         const step = activeScenario.steps[currentStepIndex];
 
-        if (step.speaker === 'user' && transcript && !feedback) { // Prevent multiple triggers
+        if (step.speaker === 'user' && transcript && feedback !== 'correct') {
             const matches = step.expected.some(word =>
                 transcript.toLowerCase().includes(word.toLowerCase())
             );
 
             if (matches) {
                 setFeedback('correct');
-                addScore(10); // Immediate XP
+                addScore(10);
                 const timeout = setTimeout(() => {
                     setFeedback(null);
                     nextStep();
@@ -58,6 +58,21 @@ export default function ScenarioPractice({
             }
         }
     }, [transcript, activeScenario, currentStepIndex, feedback, addScore]);
+
+    // Handle "Not Recognized" state when listening ends
+    useEffect(() => {
+        if (!isListening && transcript && feedback !== 'correct') {
+            const step = activeScenario?.steps[currentStepIndex];
+            if (step?.speaker === 'user') {
+                const matches = step.expected.some(word =>
+                    transcript.toLowerCase().includes(word.toLowerCase())
+                );
+                if (!matches) {
+                    setFeedback('incorrect');
+                }
+            }
+        }
+    }, [isListening, transcript, feedback, activeScenario, currentStepIndex]);
 
     const nextStep = () => {
         if (currentStepIndex < activeScenario.steps.length - 1) {
@@ -132,6 +147,11 @@ export default function ScenarioPractice({
         setCurrentStepIndex(0);
         setFeedback(null);
         setShowHint(false);
+    };
+
+    const handleStartListening = () => {
+        setFeedback(null);
+        startListening();
     };
 
 
@@ -299,29 +319,39 @@ export default function ScenarioPractice({
                                     </button>
                                 )}
 
-                                <div className="min-h-[60px] md:min-h-[100px] mb-6 md:mb-8 flex items-center justify-center">
+                                <div className="min-h-[60px] md:min-h-[100px] mb-6 md:mb-8 flex flex-col items-center justify-center gap-2">
                                     {transcript ? (
-                                        <p className="text-2xl md:text-4xl font-bold">"{transcript}"</p>
+                                        <>
+                                            <p className="text-2xl md:text-4xl font-bold italic">"{transcript}"</p>
+                                            {feedback === 'incorrect' && (
+                                                <p className="text-black/60 font-bold text-sm animate-pulse mt-2">Niet herkend. Probeer de hint!</p>
+                                            )}
+                                        </>
                                     ) : (
                                         <p className="text-black/40 italic text-lg md:text-2xl">Druk op de knop en spreek...</p>
                                     )}
                                 </div>
 
-                                <button
-                                    onMouseDown={startListening}
-                                    onMouseUp={stopListening}
-                                    onMouseLeave={stopListening} // Safety: stop if mouse leaves button
-                                    onTouchStart={(e) => { e.preventDefault(); startListening(); }}
-                                    onTouchEnd={(e) => { e.preventDefault(); stopListening(); }}
-                                    className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center mx-auto transition-all transform ${isListening
-                                        ? 'bg-black scale-110 shadow-[0_0_30px_rgba(0,0,0,0.3)]'
-                                        : 'bg-black/10 hover:bg-black/20 border-2 border-black/10 hover:scale-105'
-                                        }`}
-                                >
-                                    <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-brand-orange' : 'text-black'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                                    </svg>
-                                </button>
+                                <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28">
+                                    {isListening && (
+                                        <div className="absolute inset-0 bg-black/20 rounded-full animate-ping pointer-events-none" />
+                                    )}
+                                    <button
+                                        onMouseDown={handleStartListening}
+                                        onMouseUp={stopListening}
+                                        onMouseLeave={stopListening}
+                                        onTouchStart={(e) => { e.preventDefault(); handleStartListening(); }}
+                                        onTouchEnd={(e) => { e.preventDefault(); stopListening(); }}
+                                        className={`w-full h-full rounded-full flex items-center justify-center transition-all transform z-10 relative ${isListening
+                                            ? 'bg-black scale-110 shadow-[0_0_40px_rgba(0,0,0,0.4)]'
+                                            : 'bg-black/10 hover:bg-black/20 border-2 border-black/10 hover:scale-105'
+                                            }`}
+                                    >
+                                        <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-brand-orange' : 'text-black'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                        </svg>
+                                    </button>
+                                </div>
                                 <p className="mt-4 md:mt-6 text-xs md:text-sm text-black/40 font-bold uppercase tracking-widest mb-8">Houd ingedrukt om te spreken</p>
 
                                 <button
