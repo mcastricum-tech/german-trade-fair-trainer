@@ -2,58 +2,61 @@ import React from 'react';
 import { vocabulary, categories } from '../data/vocabulary';
 
 export default function VocabularyList({ speak }) {
-    const [activeCategory, setActiveCategory] = React.useState('materials');
+    const [selectedCategory, setSelectedCategory] = React.useState(categories[0].id); // Assuming categories is an array and we want the first item's ID
 
-    const filteredVocab = vocabulary.filter(v => v.category === activeCategory);
+    const filteredWords = vocabulary.filter(v => v.category === selectedCategory);
 
     return (
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto pb-24 md:pb-0">
             <div className="text-center mb-12">
-                <h2 className="text-5xl font-bold text-brand-orange font-display mb-4">Wortschatz Üben</h2>
-                <p className="text-brand-text text-lg font-medium">Klik op een kaart om de uitspraak te horen</p>
+                <h2 className="text-5xl font-bold text-brand-orange font-display mb-4 tracking-tight">Wortschatz Üben</h2>
+                <p className="text-slate-500 text-lg">Klik op een kaart om de uitspraak te horen 🔊</p>
             </div>
 
-            {/* Category Tabs */}
-            <div className="flex flex-wrap justify-center gap-4 mb-16">
-                {Object.entries(categories).map(([key, label]) => (
+            {/* Category Filter */}
+            <div className="flex flex-wrap justify-center gap-3 mb-10 sticky top-20 bg-slate-50/95 p-4 rounded-2xl backdrop-blur-sm z-30 shadow-sm border border-slate-100">
+                {categories.map(cat => (
                     <button
-                        key={key}
-                        onClick={() => setActiveCategory(key)}
-                        className={`px-8 py-3 rounded-full font-display text-xl font-bold transition-all ${activeCategory === key
-                                ? 'bg-brand-orange text-white shadow-xl transform -translate-y-1'
-                                : 'bg-white text-brand-text hover:bg-orange-50 hover:text-brand-orange shadow-sm'
+                        key={cat.id}
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`px-5 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 ${selectedCategory === cat.id
+                            ? 'bg-brand-orange text-white shadow-lg ring-2 ring-orange-200'
+                            : 'bg-white text-slate-500 hover:text-brand-orange shadow-sm border border-slate-200 hover:border-brand-orange'
                             }`}
                     >
-                        {label}
+                        {cat.label}
                     </button>
                 ))}
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredVocab.map(item => (
+            {/* Visual Header for Section */}
+            <div className="mb-6 flex items-center gap-4">
+                <div className="h-px bg-slate-200 flex-1"></div>
+                <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                    {categories.find(c => c.id === selectedCategory)?.label || 'Alle Woorden'}
+                </span>
+                <div className="h-px bg-slate-200 flex-1"></div>
+            </div>
+
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredWords.map((item, index) => (
                     <div
-                        key={item.id}
-                        className="group bg-white rounded-[2rem] p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer hover:-translate-y-2 duration-300"
-                        onClick={() => speak(item.term)}
+                        key={index}
+                        onClick={() => speak(item.german)}
+                        className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer hover:-translate-y-1 border border-slate-100 group relative overflow-hidden active:scale-95"
                     >
-                        <div className="flex justify-between items-start mb-6">
-                            <span className="text-xs font-bold text-brand-orange bg-orange-50 px-4 py-2 rounded-full uppercase tracking-widest">
-                                {categories[item.category]}
-                            </span>
-                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-brand-orange group-hover:text-white transition-all">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                                </svg>
-                            </div>
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-brand-orange/5 rounded-bl-[3rem] -mr-8 -mt-8 transition-transform group-hover:scale-150" />
+
+                        <p className="text-2xl font-bold text-black group-hover:text-brand-orange mb-2 font-display">{item.german}</p>
+                        <p className="text-slate-500 font-medium">{item.dutch}</p>
+
+                        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-brand-orange">
+                            🔊
                         </div>
-                        <h3 className="text-4xl font-bold text-black mb-3 font-display group-hover:text-brand-orange transition-colors">
-                            {item.term}
-                        </h3>
-                        <p className="text-slate-500 font-medium text-xl">{item.translation}</p>
                     </div>
                 ))}
             </div>
-        </div>
+        </div >
     );
 }

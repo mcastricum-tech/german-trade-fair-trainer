@@ -299,8 +299,14 @@ export default function ScenarioPractice({
                                 )}
 
                                 {showHint ? (
-                                    <div className="mb-6 md:mb-10 bg-white/5 p-4 md:p-6 rounded-2xl inline-block max-w-lg">
-                                        <p className="text-brand-orange mb-1 md:mb-2 text-xs md:text-sm uppercase font-bold tracking-wider">Hint</p>
+                                    <div
+                                        onClick={() => setShowHint(false)}
+                                        className="mb-6 md:mb-10 bg-white/5 p-4 md:p-6 rounded-2xl inline-block max-w-lg cursor-pointer hover:bg-white/10 transition-colors"
+                                    >
+                                        <div className="flex justify-between items-center mb-1 md:mb-2">
+                                            <p className="text-brand-orange text-xs md:text-sm uppercase font-bold tracking-wider">Hint</p>
+                                            <span className="text-slate-400 text-xs text-[10px] uppercase tracking-widest">Tik om te sluiten</span>
+                                        </div>
                                         <p className="text-xl md:text-3xl font-bold font-display leading-snug">"{currentStep.hint}"</p>
                                     </div>
                                 ) : (
@@ -335,12 +341,18 @@ export default function ScenarioPractice({
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                     </svg>
                                 </button>
-                                <p className="mt-4 md:mt-6 text-xs md:text-sm text-slate-500 font-bold uppercase tracking-widest">Houd ingedrukt om te spreken</p>
+                                <p className="mt-4 md:mt-6 text-xs md:text-sm text-slate-500 font-bold uppercase tracking-widest mb-8">Houd ingedrukt om te spreken</p>
 
+                                <button
+                                    onClick={nextStep}
+                                    className="text-slate-500 hover:text-white text-xs font-bold uppercase tracking-widest hover:underline py-4"
+                                >
+                                    Overslaan →
+                                </button>
                             </>
                         )}
 
-                        <button onClick={nextStep} className="absolute top-6 right-6 md:top-8 md:right-8 text-slate-500 hover:text-white text-[10px] md:text-xs font-bold uppercase tracking-widest hover:underline">Skip</button>
+                        {/* Removed absolute positioned skip button */}
                     </div>
                 )}
             </div>
