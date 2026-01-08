@@ -217,11 +217,11 @@ export default function ScenarioPractice({
     const currentStep = activeScenario.steps[currentStepIndex];
 
     return (
-        <div className="max-w-3xl mx-auto min-h-[60vh] flex flex-col justify-center">
-            <div className="flex justify-between items-center mb-8">
+        <div className="max-w-3xl mx-auto min-h-[60vh] flex flex-col justify-start md:justify-center pt-8 md:pt-0 pb-32 md:pb-0">
+            <div className="flex justify-between items-center mb-4 md:mb-8">
                 <button
                     onClick={() => setActiveScenario(null)}
-                    className="text-slate-400 hover:text-brand-orange flex items-center gap-2 font-bold font-display text-xl transition-colors"
+                    className="text-slate-400 hover:text-brand-orange flex items-center gap-2 font-bold font-display text-lg md:text-xl transition-colors"
                 >
                     ← Stoppen
                 </button>
@@ -229,7 +229,7 @@ export default function ScenarioPractice({
                 {/* XP gained in this session indicator could go here, but global is in header */}
             </div>
 
-            <div className="flex-1 flex flex-col gap-8">
+            <div className="flex-1 flex flex-col gap-6 md:gap-8">
                 {/* Progress */}
                 <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
                     <div
@@ -240,7 +240,7 @@ export default function ScenarioPractice({
 
                 {/* Bot Message or Context */}
                 {currentStep.speaker === 'bot' && (
-                    <div className="bg-white p-12 rounded-[2.5rem] shadow-2xl text-center relative overflow-hidden ring-1 ring-slate-100">
+                    <div className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center relative overflow-hidden ring-1 ring-slate-100">
                         {/* Minimalist pulse indicator */}
                         {speaking && (
                             <div className="absolute top-6 right-6 flex gap-1">
@@ -250,20 +250,20 @@ export default function ScenarioPractice({
                             </div>
                         )}
 
-                        <p className="text-4xl md:text-5xl font-bold text-black mb-6 font-display leading-tight">"{currentStep.text}"</p>
-                        <p className="text-slate-500 text-xl font-medium mb-10">{currentStep.translation}</p>
+                        <p className="text-2xl md:text-5xl font-bold text-black mb-4 md:mb-6 font-display leading-tight">"{currentStep.text}"</p>
+                        <p className="text-slate-500 text-lg md:text-xl font-medium mb-8 md:mb-10">{currentStep.translation}</p>
 
-                        <div className="flex flex-col items-center gap-4">
+                        <div className="flex flex-col items-center gap-3 md:gap-4">
                             <button
                                 onClick={nextStep}
-                                className="w-full md:w-auto px-12 py-4 bg-brand-orange text-white rounded-full font-bold font-display text-2xl hover:bg-orange-600 transition-all hover:scale-105 shadow-xl hover:shadow-orange-200"
+                                className="w-full md:w-auto px-6 md:px-12 py-3 md:py-4 bg-brand-orange text-white rounded-full font-bold font-display text-lg md:text-2xl hover:bg-orange-600 transition-all hover:scale-105 shadow-lg md:shadow-xl hover:shadow-orange-200"
                             >
                                 Weiter →
                             </button>
                             {!currentStep.isInstruction && (
                                 <button
                                     onClick={() => speak(currentStep.text)}
-                                    className="text-slate-400 hover:text-black font-bold text-sm uppercase tracking-widest flex items-center gap-2 mt-4 transition-colors"
+                                    className="text-slate-400 hover:text-black font-bold text-xs md:text-sm uppercase tracking-widest flex items-center gap-2 mt-1 md:mt-4 transition-colors"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                     Wiederholen
@@ -275,71 +275,72 @@ export default function ScenarioPractice({
 
                 {/* User Turn */}
                 {currentStep.speaker === 'user' && (
-                    <div className="bg-black p-12 rounded-[2.5rem] shadow-2xl text-center text-white relative overflow-hidden">
+                    <div className="bg-black p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center text-white relative overflow-hidden">
 
                         {feedback === 'correct' ? (
                             <div className="py-8">
-                                <div className="text-6xl font-bold text-brand-orange mb-4 font-display animate-bounce">
+                                <div className="text-4xl md:text-6xl font-bold text-brand-orange mb-4 font-display animate-bounce">
                                     Richtig! ✓
                                 </div>
-                                <p className="text-brand-teal font-bold text-2xl animate-pulse">+10 XP</p>
+                                <p className="text-brand-teal font-bold text-xl md:text-2xl animate-pulse">+10 XP</p>
                             </div>
                         ) : (
                             <>
                                 {/* If we are in drill mode, allow skipping simply */}
 
-                                <div className="mb-8">
-                                    <span className="bg-white/10 text-white text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest border border-white/20">Jij bent aan de beurt</span>
+                                <div className="mb-6 md:mb-8">
+                                    <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Jij bent aan de beurt</span>
                                 </div>
 
                                 {error && (
-                                    <div className="mb-6 bg-red-500/20 border border-red-500/50 p-4 rounded-xl animate-pulse">
-                                        <p className="text-red-200 font-bold text-sm">⚠️ {error}</p>
+                                    <div className="mb-6 bg-red-500/20 border border-red-500/50 p-3 md:p-4 rounded-xl animate-pulse">
+                                        <p className="text-red-200 font-bold text-xs md:text-sm">⚠️ {error}</p>
                                     </div>
                                 )}
 
                                 {showHint ? (
-                                    <div className="mb-10 bg-white/5 p-6 rounded-2xl inline-block max-w-lg">
-                                        <p className="text-brand-orange mb-2 text-sm uppercase font-bold tracking-wider">Hint</p>
-                                        <p className="text-3xl font-bold font-display leading-snug">"{currentStep.hint}"</p>
+                                    <div className="mb-6 md:mb-10 bg-white/5 p-4 md:p-6 rounded-2xl inline-block max-w-lg">
+                                        <p className="text-brand-orange mb-1 md:mb-2 text-xs md:text-sm uppercase font-bold tracking-wider">Hint</p>
+                                        <p className="text-xl md:text-3xl font-bold font-display leading-snug">"{currentStep.hint}"</p>
                                     </div>
                                 ) : (
                                     <button
                                         onClick={() => setShowHint(true)}
-                                        className="text-slate-400 text-sm hover:text-white mb-10 underline decoration-dotted underline-offset-4"
+                                        className="text-slate-400 text-xs md:text-sm hover:text-white mb-6 md:mb-10 underline decoration-dotted underline-offset-4"
                                     >
                                         Toon hint
                                     </button>
                                 )}
 
-                                <div className="min-h-[100px] mb-8 flex items-center justify-center">
+                                <div className="min-h-[60px] md:min-h-[100px] mb-6 md:mb-8 flex items-center justify-center">
                                     {transcript ? (
-                                        <p className="text-4xl font-bold">"{transcript}"</p>
+                                        <p className="text-2xl md:text-4xl font-bold">"{transcript}"</p>
                                     ) : (
-                                        <p className="text-slate-500 italic text-2xl">Druk op de knop en spreek...</p>
+                                        <p className="text-slate-500 italic text-lg md:text-2xl">Druk op de knop en spreek...</p>
                                     )}
                                 </div>
 
                                 <button
                                     onMouseDown={startListening}
                                     onMouseUp={stopListening}
-                                    onTouchStart={startListening}
-                                    onTouchEnd={stopListening}
-                                    className={`w-28 h-28 rounded-full flex items-center justify-center mx-auto transition-all transform ${isListening
+                                    onMouseLeave={stopListening} // Safety: stop if mouse leaves button
+                                    onTouchStart={(e) => { e.preventDefault(); startListening(); }}
+                                    onTouchEnd={(e) => { e.preventDefault(); stopListening(); }}
+                                    className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center mx-auto transition-all transform ${isListening
                                         ? 'bg-brand-orange scale-110 shadow-[0_0_30px_rgba(231,64,22,0.6)]'
                                         : 'bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:scale-105'
                                         }`}
                                 >
-                                    <svg className={`w-12 h-12 ${isListening ? 'text-white' : 'text-brand-orange'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-white' : 'text-brand-orange'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                     </svg>
                                 </button>
-                                <p className="mt-6 text-sm text-slate-500 font-bold uppercase tracking-widest">Houd ingedrukt om te spreken</p>
+                                <p className="mt-4 md:mt-6 text-xs md:text-sm text-slate-500 font-bold uppercase tracking-widest">Houd ingedrukt om te spreken</p>
 
                             </>
                         )}
 
-                        <button onClick={nextStep} className="absolute top-8 right-8 text-slate-500 hover:text-white text-xs font-bold uppercase tracking-widest hover:underline">Skip</button>
+                        <button onClick={nextStep} className="absolute top-6 right-6 md:top-8 md:right-8 text-slate-500 hover:text-white text-[10px] md:text-xs font-bold uppercase tracking-widest hover:underline">Skip</button>
                     </div>
                 )}
             </div>

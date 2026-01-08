@@ -89,6 +89,15 @@ export function useSpeech() {
                 case 'audio-capture':
                     setError("Microfoon niet gevonden.");
                     break;
+                case 'aborted':
+                case 'not-allowed':
+                    // 'aborted' is normal when stopping; 'not-allowed' is permission denied
+                    if (event.error === 'not-allowed') {
+                        setError("Geen toegang tot microfoon. Controleer je instellingen.");
+                    } else {
+                        setError(null); // Ignore aborted
+                    }
+                    break;
                 default:
                     setError(`Fout bij spraakherkenning: ${event.error}`);
             }
