@@ -1,0 +1,128 @@
+import { useState, useEffect, useCallback, useRef } from 'react';
+
+export function useSpeech() {
+    const [isListening, setIsListening] = useState(false);
+    const [transcript, setTranscript] = useState('');
+    const [speaking, setSpeaking] = useState(false);
+    const [supported, setSupported] = useState(true);
+    const [voices, setVoices] = useState([]);
+    const [selectedVoice, setSelectedVoice] = useState(null);
+
+    const recognitionRef = useRef(null);
+    const synth = window.speechSynthesis;
+
+    // Load voices
+    useEffect(() => {
+        if (!synth) return;
+
+        const loadVoices = () => {
+            const allVoices = synth.getVoices();
+            const germanVoices = allVoices.filter(v => v.lang.includes('de'));
+            setVoices(germanVoices);
+
+            // Smart default: prioritize "Google", "Microsoft", or "Natural"
+            // Only set output if no voice is currently selected or if the currently selected one is not available
+            if (germanVoices.length > 0 && !selectedVoice) {
+                const preferred = germanVoices.find(v =>
+                    v.name.includes('Google') ||
+                    v.name.includes('Neural') ||
+                    v.name.includes('Natural')
+                );
+                setSelectedVoice(preferred || germanVoices[0]);
+            }
+        };
+
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+    }, [synth, selectedVoice]);
+
+    useEffect(() => {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            setSupported(false);
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = false;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'de-DE';
+
+        recognitionRef.current.onstart = () => setIsListening(true);
+        recognitionRef.current.onend = () => setIsListening(false);
+
+        recognitionRef.current.onresult = (event) => {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                }
+            }
+            if (finalTranscript) {
+                setTranscript(finalTranscript);
+            }
+        };
+
+        recognitionRef.current.onerror = (event) => {
+            console.error('Speech recognition error', event.error);
+            setIsListening(false);
+        };
+
+        return () => {
+            if (recognitionRef.current) {
+                recognitionRef.current.abort();
+            }
+        };
+    }, []);
+
+    const speak = useCallback((text) => {
+        if (!synth) return;
+
+        synth.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'de-DE';
+
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+        }
+
+        utterance.onstart = () => setSpeaking(true);
+        utterance.onend = () => setSpeaking(false);
+        utterance.onerror = () => setSpeaking(false);
+
+        synth.speak(utterance);
+    }, [synth, selectedVoice]);
+
+    const startListening = useCallback(() => {
+        setTranscript('');
+        if (recognitionRef.current) {
+            try {
+                recognitionRef.current.start();
+            } catch (e) {
+                console.error("Error starting recognition:", e);
+            }
+        }
+    }, []);
+
+    const stopListening = useCallback(() => {
+        if (recognitionRef.current) {
+            recognitionRef.current.stop();
+        }
+    }, []);
+
+    return {
+        isListening,
+        transcript,
+        startListening,
+        stopListening,
+        speak,
+        speaking,
+        supported,
+        voices,
+        selectedVoice,
+        setSelectedVoice
+    };
+}
