@@ -70,10 +70,9 @@ export default function ScenarioPractice({
             // Scenario done
             if (activeScenario.id !== 'drill') {
                 completeScenario(activeScenario.id);
-                alert(`Scenario voltooid! Gut gemacht! (+100 XP Bonus)`);
-            } else {
-                alert(`Drill sessie compleet! Goed gedaan!`);
             }
+            // Instead of blocking alert, we'll just go back to overview
+            // Maybe add a small delay or a completion state later if needed
             setActiveScenario(null);
             setCurrentStepIndex(0);
         }
@@ -259,21 +258,21 @@ export default function ScenarioPractice({
 
                 {/* User Turn */}
                 {currentStep.speaker === 'user' && (
-                    <div className="bg-brand-orange p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center text-black relative overflow-hidden">
+                    <div className="bg-brand-orange p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center text-white relative overflow-hidden">
 
                         {feedback === 'correct' ? (
                             <div className="py-8 flex flex-col items-center justify-center min-h-[200px]">
                                 <div className="text-4xl md:text-6xl font-bold mb-4 font-display">
                                     Richtig! ✓
                                 </div>
-                                <p className="text-black/60 font-bold text-xl md:text-2xl">+10 XP</p>
+                                <p className="text-white/80 font-bold text-xl md:text-2xl">+10 XP</p>
                             </div>
                         ) : (
                             <>
                                 {/* If we are in drill mode, allow skipping simply */}
 
                                 <div className="mb-6 md:mb-8">
-                                    <span className="bg-black/10 text-black text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-black/10">Jij bent aan de beurt</span>
+                                    <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Jij bent aan de beurt</span>
                                 </div>
 
                                 {error && (
@@ -285,18 +284,18 @@ export default function ScenarioPractice({
                                 {showHint ? (
                                     <div
                                         onClick={() => setShowHint(false)}
-                                        className="mb-6 md:mb-10 bg-black/5 p-4 md:p-6 rounded-2xl inline-block max-w-lg cursor-pointer hover:bg-black/10 transition-colors"
+                                        className="mb-6 md:mb-10 bg-white/10 p-4 md:p-6 rounded-2xl inline-block max-w-lg cursor-pointer hover:bg-white/20 transition-colors"
                                     >
                                         <div className="flex justify-between items-center mb-1 md:mb-2">
-                                            <p className="text-black/40 text-xs md:text-sm uppercase font-bold tracking-wider">Hint</p>
-                                            <span className="text-black/30 text-[10px] uppercase tracking-widest">Tik om te sluiten</span>
+                                            <p className="text-white/60 text-xs md:text-sm uppercase font-bold tracking-wider">Hint</p>
+                                            <span className="text-white/40 text-[10px] uppercase tracking-widest">Tik om te sluiten</span>
                                         </div>
                                         <p className="text-xl md:text-3xl font-bold font-display leading-snug">"{currentStep.hint}"</p>
                                     </div>
                                 ) : (
                                     <button
                                         onClick={() => setShowHint(true)}
-                                        className="text-black/40 text-xs md:text-sm hover:text-black mb-6 md:mb-10 underline decoration-dotted underline-offset-4"
+                                        className="text-white/60 text-xs md:text-sm hover:text-white mb-6 md:mb-10 underline decoration-dotted underline-offset-4"
                                     >
                                         Toon hint
                                     </button>
@@ -307,17 +306,17 @@ export default function ScenarioPractice({
                                         <>
                                             <p className="text-2xl md:text-4xl font-bold italic">"{transcript}"</p>
                                             {feedback === 'incorrect' && (
-                                                <p className="text-black/60 font-bold text-sm animate-pulse mt-2">Niet herkend. Probeer de hint!</p>
+                                                <p className="text-white/60 font-bold text-sm animate-pulse mt-2">Niet herkend. Probeer de hint!</p>
                                             )}
                                         </>
                                     ) : (
-                                        <p className="text-black/40 italic text-lg md:text-2xl">Druk op de knop en spreek...</p>
+                                        <p className="text-white/40 italic text-lg md:text-2xl">Druk op de knop en spreek...</p>
                                     )}
                                 </div>
 
                                 <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28">
                                     {isListening && (
-                                        <div className="absolute inset-0 bg-black/10 rounded-full animate-ping pointer-events-none" />
+                                        <div className="absolute inset-0 bg-white/20 rounded-full animate-ping pointer-events-none" />
                                     )}
                                     <button
                                         onMouseDown={handleStartListening}
@@ -326,20 +325,20 @@ export default function ScenarioPractice({
                                         onTouchStart={(e) => { e.preventDefault(); handleStartListening(); }}
                                         onTouchEnd={(e) => { e.preventDefault(); stopListening(); }}
                                         className={`w-full h-full rounded-full flex items-center justify-center transition-all transform z-10 relative ${isListening
-                                            ? 'bg-black scale-110 shadow-lg'
-                                            : 'bg-white shadow-md hover:scale-105'
+                                            ? 'bg-white scale-110 shadow-lg'
+                                            : 'bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:scale-105'
                                             }`}
                                     >
-                                        <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-brand-orange' : 'text-brand-orange'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-brand-orange' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                         </svg>
                                     </button>
                                 </div>
-                                <p className="mt-4 md:mt-6 text-xs md:text-sm text-black/40 font-bold uppercase tracking-widest mb-8">Houd ingedrukt om te spreken</p>
+                                <p className="mt-4 md:mt-6 text-xs md:text-sm text-white/40 font-bold uppercase tracking-widest mb-8">Houd ingedrukt om te spreken</p>
 
                                 <button
                                     onClick={nextStep}
-                                    className="text-black/40 hover:text-black text-xs font-bold uppercase tracking-widest hover:underline py-4"
+                                    className="text-white/40 hover:text-white text-xs font-bold uppercase tracking-widest hover:underline py-4"
                                 >
                                     Overslaan →
                                 </button>
