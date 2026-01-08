@@ -242,25 +242,40 @@ export default function ScenarioPractice({
                     />
                 </div>
 
-                {/* Bot Message or Context */}
-                {currentStep.speaker === 'bot' && (
-                    <div className="bg-white p-6 md:p-12 rounded-[2rem] shadow-xl md:shadow-2xl text-center relative overflow-hidden ring-1 ring-slate-100 flex flex-col items-center justify-center min-h-[300px]">
-                        <p className="text-2xl md:text-5xl font-bold text-black mb-4 font-display leading-tight italic opacity-40 animate-pulse">
-                            Buddy spreekt...
-                        </p>
-                        <p className="text-2xl md:text-4xl font-bold text-black mb-4 font-display leading-tight">"{currentStep.text}"</p>
-                        <p className="text-slate-500 text-lg md:text-xl font-medium">{currentStep.translation}</p>
+                {/* Unified Practice Card */}
+                <div className={`${currentStep.speaker === 'bot' ? 'bg-white' : 'bg-brand-orange'} p-6 md:p-12 rounded-[2rem] shadow-xl md:shadow-2xl text-center relative overflow-hidden transition-colors duration-500 min-h-[500px] flex flex-col justify-between border border-slate-100`}>
+
+                    {/* Bot Area */}
+                    <div className="flex flex-col items-center">
+                        <div className={`transition-all duration-500 w-full ${currentStep.speaker === 'bot' ? 'opacity-100 scale-100' : 'opacity-40 scale-90 mb-4'}`}>
+                            <p className="text-brand-orange text-[10px] md:text-xs font-bold uppercase tracking-widest mb-2">Buddy spreekt:</p>
+                            <p className={`font-bold font-display leading-tight mb-2 ${currentStep.speaker === 'bot' ? 'text-2xl md:text-5xl text-black' : 'text-xl md:text-2xl text-white'}`}>
+                                "{currentStep.speaker === 'bot' ? currentStep.text : (activeScenario.steps[currentStepIndex - 1]?.text || '...')}"
+                            </p>
+                            <p className={`font-medium ${currentStep.speaker === 'bot' ? 'text-slate-500 text-lg md:text-xl' : 'text-white/60 text-sm md:text-base'}`}>
+                                {currentStep.speaker === 'bot' ? currentStep.translation : (activeScenario.steps[currentStepIndex - 1]?.translation || '')}
+                            </p>
+
+                            {currentStep.speaker === 'user' && (
+                                <button
+                                    onClick={() => speak(activeScenario.steps[currentStepIndex - 1]?.text)}
+                                    className="mt-2 text-[10px] text-white/40 hover:text-white flex items-center justify-center gap-1 uppercase font-bold mx-auto transition-colors"
+                                >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                                    Herhaal Buddy
+                                </button>
+                            )}
+                        </div>
                     </div>
-                )}
 
-                {/* User Turn */}
-                {currentStep.speaker === 'user' && (
-                    <div className="bg-brand-orange p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center text-white relative overflow-hidden">
+                    <div className="h-px bg-slate-100/20 w-full my-6" />
 
+                    {/* User Area */}
+                    <div className={`flex flex-col items-center transition-all duration-500 ${currentStep.speaker === 'user' ? 'opacity-100 translate-y-0' : 'opacity-20 translate-y-4 pointer-events-none'}`}>
                         {feedback === 'correct' ? (
-                            <div className="py-8 flex flex-col items-center justify-center min-h-[250px] gap-6">
+                            <div className="py-8 flex flex-col items-center justify-center gap-6">
                                 <div className="text-center">
-                                    <div className="text-4xl md:text-6xl font-bold mb-4 font-display">
+                                    <div className="text-4xl md:text-6xl font-bold mb-4 font-display text-white">
                                         Richtig! ✓
                                     </div>
                                     <p className="text-white/80 font-bold text-xl md:text-2xl">+10 XP</p>
@@ -274,117 +289,71 @@ export default function ScenarioPractice({
                             </div>
                         ) : (
                             <>
-                                {/* If we are in drill mode, allow skipping simply */}
-
-                                <div className="mb-6 md:mb-8 flex flex-col items-center gap-2">
-                                    <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Jij bent aan de beurt</span>
-
-                                    {/* Bot Context (Previous Step) */}
-                                    {currentStepIndex > 0 && activeScenario.steps[currentStepIndex - 1].speaker === 'bot' && (
-                                        <div className="mt-4 mb-6 bg-black/10 p-4 rounded-2xl w-full max-w-sm border border-white/10">
-                                            <p className="text-white/40 text-[10px] uppercase font-bold tracking-widest mb-1">Buddy zei:</p>
-                                            <p className="text-xl font-bold">"{activeScenario.steps[currentStepIndex - 1].text}"</p>
-                                            <div className="flex justify-center gap-4 mt-2">
-                                                <button
-                                                    onClick={() => speak(activeScenario.steps[currentStepIndex - 1].text)}
-                                                    className="text-[10px] text-white/60 hover:text-white flex items-center gap-1 uppercase font-bold"
-                                                >
-                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-                                                    Herhaal Buddy
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {currentStep.translation && (
-                                        <p className="text-xl md:text-3xl font-bold mt-2">"{currentStep.translation}"</p>
+                                <div className="mb-6 flex flex-col items-center gap-2">
+                                    <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Jouw beurt</span>
+                                    {currentStep.speaker === 'user' && currentStep.translation && (
+                                        <p className="text-white text-xl md:text-3xl font-bold mt-2">"{currentStep.translation}"</p>
                                     )}
                                 </div>
 
-                                {error && (
-                                    <div className="mb-6 bg-red-500/20 border border-red-500/50 p-3 md:p-4 rounded-xl animate-pulse">
-                                        <p className="text-red-200 font-bold text-xs md:text-sm">⚠️ {error}</p>
-                                    </div>
-                                )}
-
                                 {showHint ? (
-                                    <div
-                                        className="mb-6 md:mb-10 bg-white/10 p-4 md:p-6 rounded-2xl inline-block w-full max-w-lg relative"
-                                    >
-                                        <div className="flex justify-between items-center mb-1 md:mb-2">
-                                            <p className="text-white/60 text-xs md:text-sm uppercase font-bold tracking-wider">Het antwoord is:</p>
-                                            <button
-                                                onClick={() => setShowHint(false)}
-                                                className="text-white/30 hover:text-white text-[10px] uppercase tracking-widest"
-                                            >
-                                                Sluiten &times;
-                                            </button>
+                                    <div className="mb-6 bg-white/10 p-4 rounded-2xl w-full max-w-sm">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <p className="text-white/60 text-[10px] uppercase font-bold tracking-widest">Duitse zin:</p>
+                                            <button onClick={() => setShowHint(false)} className="text-white/30 hover:text-white">&times;</button>
                                         </div>
-                                        <p className="text-xl md:text-3xl font-bold font-display leading-snug mb-4">"{currentStep.hint}"</p>
+                                        <p className="text-white text-xl font-bold mb-3">"{currentStep.hint}"</p>
                                         <button
                                             onClick={() => speak(currentStep.hint)}
-                                            className="bg-white text-brand-orange px-6 py-2 rounded-full font-bold font-display text-sm hover:scale-105 transition-all flex items-center gap-2 mx-auto"
+                                            className="bg-white text-brand-orange px-4 py-1.5 rounded-full font-bold text-xs flex items-center gap-2 mx-auto"
                                         >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-                                            Hör de uitspraak
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                                            Hör uitspraak
                                         </button>
                                     </div>
                                 ) : (
                                     <button
                                         onClick={() => setShowHint(true)}
-                                        className="text-white/60 text-xs md:text-sm hover:text-white mb-6 md:mb-10 underline decoration-dotted underline-offset-4"
+                                        className="text-white/40 text-xs md:text-sm hover:text-white mb-6 underline decoration-dotted"
                                     >
                                         Toon hint
                                     </button>
                                 )}
 
-                                <div className="min-h-[60px] md:min-h-[100px] mb-6 md:mb-8 flex flex-col items-center justify-center gap-2">
+                                <div className="min-h-[40px] mb-6">
                                     {transcript ? (
-                                        <>
-                                            <p className="text-2xl md:text-4xl font-bold italic">"{transcript}"</p>
-                                            {feedback === 'incorrect' && (
-                                                <p className="text-white/60 font-bold text-sm animate-pulse mt-2">Niet herkend. Probeer de hint!</p>
-                                            )}
-                                        </>
+                                        <p className="text-white text-xl md:text-2xl font-bold italic">"{transcript}"</p>
                                     ) : (
-                                        <p className="text-white/40 italic text-lg md:text-2xl">Druk op de knop en spreek...</p>
+                                        <p className="text-white/30 italic text-sm">Houd microfoon ingedrukt...</p>
                                     )}
                                 </div>
 
-                                <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28">
-                                    {isListening && (
-                                        <div className="absolute inset-0 bg-white/20 rounded-full animate-ping pointer-events-none" />
-                                    )}
+                                <div className="relative mx-auto w-20 h-20 md:w-24 md:h-24 mb-4">
+                                    {isListening && <div className="absolute inset-0 bg-white/20 rounded-full animate-ping pointer-events-none" />}
                                     <button
                                         onMouseDown={handleStartListening}
                                         onMouseUp={stopListening}
                                         onMouseLeave={stopListening}
                                         onTouchStart={(e) => { e.preventDefault(); handleStartListening(); }}
                                         onTouchEnd={(e) => { e.preventDefault(); stopListening(); }}
-                                        className={`w-full h-full rounded-full flex items-center justify-center transition-all transform z-10 relative ${isListening
-                                            ? 'bg-white scale-110 shadow-lg'
-                                            : 'bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:scale-105'
-                                            }`}
+                                        className={`w-full h-full rounded-full flex items-center justify-center transition-all transform z-10 relative ${isListening ? 'bg-white scale-110 shadow-lg' : 'bg-white/10 hover:bg-white/20 border-2 border-white/20'}`}
                                     >
-                                        <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-brand-orange' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className={`w-8 h-8 md:w-10 md:h-10 ${isListening ? 'text-brand-orange' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                         </svg>
                                     </button>
                                 </div>
-                                <p className="mt-4 md:mt-6 text-xs md:text-sm text-white/40 font-bold uppercase tracking-widest mb-8">Houd ingedrukt om te spreken</p>
 
                                 <button
                                     onClick={nextStep}
-                                    className="text-white/40 hover:text-white text-xs font-bold uppercase tracking-widest hover:underline py-4"
+                                    className="text-white/20 hover:text-white text-[10px] font-bold uppercase tracking-widest hover:underline"
                                 >
                                     Overslaan →
                                 </button>
                             </>
                         )}
-
-                        {/* Removed absolute positioned skip button */}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
