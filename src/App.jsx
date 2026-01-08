@@ -28,6 +28,7 @@ function App() {
     voices,
     selectedVoice,
     setSelectedVoice,
+    resetTranscript,
     error
   } = useSpeech();
 
