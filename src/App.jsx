@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import VocabularyList from './components/VocabularyList';
 import ScenarioPractice from './components/ScenarioPractice';
-import VoiceSelector from './components/VoiceSelector';
+
 import Onboarding from './components/Onboarding';
 import { useSpeech } from './hooks/useSpeech';
 import { useProgress } from './hooks/useProgress';
@@ -89,14 +89,6 @@ function App() {
             >
               Woorden
             </button>
-            <div className="mt-8 pt-8 border-t border-slate-100 w-full px-12 flex flex-col items-center">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Stem selecteren</p>
-              <VoiceSelector
-                voices={voices}
-                selectedVoice={selectedVoice}
-                onSelect={setSelectedVoice}
-              />
-            </div>
             <div className="mt-auto pb-12 text-slate-300 text-xs font-bold uppercase tracking-widest">
               Hallo, {user.name}
             </div>
