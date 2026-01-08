@@ -12,11 +12,6 @@ export default function VocabularyList({ speak }) {
 
     return (
         <div className="max-w-4xl mx-auto pb-24 md:pb-0">
-            <div className="text-center mb-8 md:mb-12">
-                <h2 className="text-3xl md:text-5xl font-bold text-brand-orange font-display mb-2 md:mb-4 tracking-tight whitespace-nowrap">Wortschatz Üben</h2>
-                <p className="text-slate-500 text-sm md:text-lg">Klik op een kaart om de uitspraak te horen</p>
-            </div>
-
             {/* Category Filter */}
             <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-10 sticky top-20 bg-slate-50/95 p-2 md:p-4 rounded-2xl backdrop-blur-sm z-30 shadow-sm border border-slate-100">
                 {categoryList.map(cat => (

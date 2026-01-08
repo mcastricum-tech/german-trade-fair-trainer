@@ -139,8 +139,6 @@ export default function ScenarioPractice({
     if (!activeScenario) {
         return (
             <div className="max-w-5xl mx-auto">
-                <h2 className="text-4xl md:text-5xl font-bold text-brand-orange font-display mb-10 text-center tracking-tight">Scenario's</h2>
-
                 {/* Drill Mode Card */}
                 <div className="mb-12">
                     <div className="bg-brand-orange text-white rounded-[2rem] p-8 md:p-10 shadow-lg relative overflow-hidden ring-4 ring-orange-100">
