@@ -20,19 +20,32 @@ export default function ScenarioPractice({
     const [feedback, setFeedback] = useState(null);
     const [drillSetup, setDrillSetup] = useState(false); // State to show drill config
 
-    // Auto-speak bot messages
+    // Auto-speak bot messages and auto-advance
     useEffect(() => {
         if (activeScenario && currentStepIndex < activeScenario.steps.length) {
             const step = activeScenario.steps[currentStepIndex];
-            // Speak only if it's a bot turn.
             if (step.speaker === 'bot') {
-                // If it's a context instruction in drill mode (isInstruction is true), we might NOT want to speak it if it's Dutch.
-                // Assuming original bot steps are German.
+                // Speak the bot message
                 if (!step.isInstruction) {
-                    const timeout = setTimeout(() => {
+                    const speakTimeout = setTimeout(() => {
                         speak(step.text);
-                    }, 500);
-                    return () => clearTimeout(timeout);
+                    }, 300);
+
+                    // Auto-advance to next step (user turn) after a slight delay
+                    const advanceTimeout = setTimeout(() => {
+                        nextStep();
+                    }, 2500);
+
+                    return () => {
+                        clearTimeout(speakTimeout);
+                        clearTimeout(advanceTimeout);
+                    };
+                } else {
+                    // Just an instruction (e.g. in drill mode)
+                    const advanceTimeout = setTimeout(() => {
+                        nextStep();
+                    }, 1500);
+                    return () => clearTimeout(advanceTimeout);
                 }
             }
         }
@@ -231,30 +244,12 @@ export default function ScenarioPractice({
 
                 {/* Bot Message or Context */}
                 {currentStep.speaker === 'bot' && (
-                    <div className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center relative overflow-hidden ring-1 ring-slate-100">
-                        {/* Removed bouncing dots as they looked strange */}
-
-
-                        <p className="text-2xl md:text-5xl font-bold text-black mb-4 md:mb-6 font-display leading-tight">"{currentStep.text}"</p>
-                        <p className="text-slate-500 text-lg md:text-xl font-medium mb-8 md:mb-10">{currentStep.translation}</p>
-
-                        <div className="flex flex-col items-center gap-3 md:gap-4">
-                            <button
-                                onClick={nextStep}
-                                className="w-full md:w-auto px-6 md:px-12 py-3 md:py-4 bg-brand-orange text-white rounded-full font-bold font-display text-lg md:text-2xl hover:bg-orange-600 transition-all hover:scale-105 shadow-lg md:shadow-xl hover:shadow-orange-200"
-                            >
-                                Weiter →
-                            </button>
-                            {!currentStep.isInstruction && (
-                                <button
-                                    onClick={() => speak(currentStep.text)}
-                                    className="text-slate-400 hover:text-black font-bold text-xs md:text-sm uppercase tracking-widest flex items-center gap-2 mt-1 md:mt-4 transition-colors"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                    Wiederholen
-                                </button>
-                            )}
-                        </div>
+                    <div className="bg-white p-6 md:p-12 rounded-[2rem] shadow-xl md:shadow-2xl text-center relative overflow-hidden ring-1 ring-slate-100 flex flex-col items-center justify-center min-h-[300px]">
+                        <p className="text-2xl md:text-5xl font-bold text-black mb-4 font-display leading-tight italic opacity-40 animate-pulse">
+                            Buddy spreekt...
+                        </p>
+                        <p className="text-2xl md:text-4xl font-bold text-black mb-4 font-display leading-tight">"{currentStep.text}"</p>
+                        <p className="text-slate-500 text-lg md:text-xl font-medium">{currentStep.translation}</p>
                     </div>
                 )}
 
@@ -283,8 +278,26 @@ export default function ScenarioPractice({
 
                                 <div className="mb-6 md:mb-8 flex flex-col items-center gap-2">
                                     <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Jij bent aan de beurt</span>
+
+                                    {/* Bot Context (Previous Step) */}
+                                    {currentStepIndex > 0 && activeScenario.steps[currentStepIndex - 1].speaker === 'bot' && (
+                                        <div className="mt-4 mb-6 bg-black/10 p-4 rounded-2xl w-full max-w-sm border border-white/10">
+                                            <p className="text-white/40 text-[10px] uppercase font-bold tracking-widest mb-1">Buddy zei:</p>
+                                            <p className="text-xl font-bold">"{activeScenario.steps[currentStepIndex - 1].text}"</p>
+                                            <div className="flex justify-center gap-4 mt-2">
+                                                <button
+                                                    onClick={() => speak(activeScenario.steps[currentStepIndex - 1].text)}
+                                                    className="text-[10px] text-white/60 hover:text-white flex items-center gap-1 uppercase font-bold"
+                                                >
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                                                    Herhaal Buddy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {currentStep.translation && (
-                                        <p className="text-lg md:text-2xl font-bold mt-2">"{currentStep.translation}"</p>
+                                        <p className="text-xl md:text-3xl font-bold mt-2">"{currentStep.translation}"</p>
                                     )}
                                 </div>
 
@@ -296,14 +309,25 @@ export default function ScenarioPractice({
 
                                 {showHint ? (
                                     <div
-                                        onClick={() => setShowHint(false)}
-                                        className="mb-6 md:mb-10 bg-white/10 p-4 md:p-6 rounded-2xl inline-block max-w-lg cursor-pointer hover:bg-white/20 transition-colors"
+                                        className="mb-6 md:mb-10 bg-white/10 p-4 md:p-6 rounded-2xl inline-block w-full max-w-lg relative"
                                     >
                                         <div className="flex justify-between items-center mb-1 md:mb-2">
-                                            <p className="text-white/60 text-xs md:text-sm uppercase font-bold tracking-wider">Hint</p>
-                                            <span className="text-white/40 text-[10px] uppercase tracking-widest">Tik om te sluiten</span>
+                                            <p className="text-white/60 text-xs md:text-sm uppercase font-bold tracking-wider">Het antwoord is:</p>
+                                            <button
+                                                onClick={() => setShowHint(false)}
+                                                className="text-white/30 hover:text-white text-[10px] uppercase tracking-widest"
+                                            >
+                                                Sluiten &times;
+                                            </button>
                                         </div>
-                                        <p className="text-xl md:text-3xl font-bold font-display leading-snug">"{currentStep.hint}"</p>
+                                        <p className="text-xl md:text-3xl font-bold font-display leading-snug mb-4">"{currentStep.hint}"</p>
+                                        <button
+                                            onClick={() => speak(currentStep.hint)}
+                                            className="bg-white text-brand-orange px-6 py-2 rounded-full font-bold font-display text-sm hover:scale-105 transition-all flex items-center gap-2 mx-auto"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                                            Hör de uitspraak
+                                        </button>
                                     </div>
                                 ) : (
                                     <button
