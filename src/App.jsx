@@ -43,7 +43,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-800">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-800">
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50 h-16 flex items-center">
         <div className="max-w-5xl mx-auto px-4 w-full flex justify-between items-center">
