@@ -144,12 +144,12 @@ export default function ScenarioPractice({
                 {/* Drill Mode Card */}
                 <div className="mb-12">
                     <div className="bg-brand-orange text-white rounded-[2rem] p-8 md:p-10 shadow-lg relative overflow-hidden ring-4 ring-orange-100">
-                        <div className="relative z-10">
+                        <div className="relative z-10 flex flex-col items-center text-center">
                             <h3 className="text-3xl md:text-4xl font-bold font-display mb-2">⚡️ Snel Oefenen</h3>
                             <p className="text-orange-100 text-lg font-medium mb-6">Kies direct een aantal vragen:</p>
 
-                            <div className="flex gap-4">
-                                {[3, 5, 10].map(num => (
+                            <div className="flex gap-4 justify-center">
+                                {[5, 10, 15].map(num => (
                                     <button
                                         key={num}
                                         onClick={(e) => { e.stopPropagation(); startDrill(num); }}
