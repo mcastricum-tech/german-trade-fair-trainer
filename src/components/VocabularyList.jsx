@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { vocabulary, categories } from '../data/vocabulary';
 
 export default function VocabularyList({ speak }) {
-    const [selectedCategory, setSelectedCategory] = React.useState(categories[0].id); // Assuming categories is an array and we want the first item's ID
+    // Convert categories object to array for easier mapping
+    const categoryList = Object.entries(categories).map(([id, label]) => ({ id, label }));
+
+    // Initialize with the first category
+    const [selectedCategory, setSelectedCategory] = useState(categoryList[0].id);
 
     const filteredWords = vocabulary.filter(v => v.category === selectedCategory);
 
@@ -15,7 +19,7 @@ export default function VocabularyList({ speak }) {
 
             {/* Category Filter */}
             <div className="flex flex-wrap justify-center gap-3 mb-10 sticky top-20 bg-slate-50/95 p-4 rounded-2xl backdrop-blur-sm z-30 shadow-sm border border-slate-100">
-                {categories.map(cat => (
+                {categoryList.map(cat => (
                     <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
@@ -33,11 +37,10 @@ export default function VocabularyList({ speak }) {
             <div className="mb-6 flex items-center gap-4">
                 <div className="h-px bg-slate-200 flex-1"></div>
                 <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">
-                    {categories.find(c => c.id === selectedCategory)?.label || 'Alle Woorden'}
+                    {categories[selectedCategory] || 'Alle Woorden'}
                 </span>
                 <div className="h-px bg-slate-200 flex-1"></div>
             </div>
-
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredWords.map((item, index) => (
@@ -57,6 +60,12 @@ export default function VocabularyList({ speak }) {
                     </div>
                 ))}
             </div>
-        </div >
+
+            {filteredWords.length === 0 && (
+                <div className="text-center py-12 text-slate-400 italic">
+                    Geen woorden gevonden in deze categorie.
+                </div>
+            )}
+        </div>
     );
 }
