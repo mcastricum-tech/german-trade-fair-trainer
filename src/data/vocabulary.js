@@ -49,6 +49,23 @@ export const vocabulary = [
     { id: 28, term: "die Lieferzeit", translation: "de levertijd", category: "business" },
     { id: 29, term: "der Rabatt", translation: "de korting", category: "business" },
     { id: 30, term: "die Rechnung", translation: "de factuur", category: "business" },
+
+    // New Additions
+    { id: 31, term: "der Kaffee", translation: "de koffie", category: "general" },
+    { id: 32, term: "möchten", translation: "willen/zouden graag", category: "actions" },
+    { id: 33, term: "die Visitenkarte", translation: "het visitekaartje", category: "business" },
+    { id: 34, term: "der Katalog", translation: "de catalogus", category: "business" },
+    { id: 35, term: "die Maschen", translation: "de steken", category: "materials" },
+    { id: 36, term: "fest", translation: "strak/vast", category: "materials" },
+    { id: 37, term: "weich", translation: "zacht", category: "materials" },
+    { id: 38, term: "die Farbe", translation: "de kleur", category: "materials" },
+    { id: 39, term: "ausverkauft", translation: "uitverkocht", category: "business" },
+    { id: 40, term: "das Angebot", translation: "de aanbieding/offerte", category: "business" },
+    { id: 41, term: "bezahlen", translation: "betalen", category: "actions" },
+    { id: 42, term: "bar", translation: "contant", category: "business" },
+    { id: 43, term: "mit Karte", translation: "met kaart", category: "business" },
+    { id: 44, term: "helfen", translation: "helpen", category: "actions" },
+    { id: 45, term: "die Fragen", translation: "de vragen", category: "general" },
 ];
 
 export const scenarios = [
@@ -165,6 +182,93 @@ export const scenarios = [
                 translation: "We kunnen binnen een week leveren.",
                 expected: ["Woche", "Tage", "liefern", "schnell"],
                 hint: "Wir können innerhalb einer Woche liefern.",
+            }
+        ]
+    },
+    {
+        id: "smalltalk_coffee",
+        title: "Koffie & Contact",
+        description: "Breek het ijs met een praatje en wissel gegevens uit.",
+        steps: [
+            {
+                speaker: "bot",
+                text: "Das ist ein sehr schöner Stand. Haben Sie viel zu tun?",
+                translation: "Dat is een erg mooie stand. Heeft u het druk?"
+            },
+            {
+                speaker: "user",
+                translation: "Ja, hartstikke druk! Wilt u een koffie?",
+                expected: ["ja", "viel", "tun", "Kaffee", "möchten"],
+                hint: "Ja, sehr viel zu tun! Möchten Sie einen Kaffee?",
+            },
+            {
+                speaker: "bot",
+                text: "Gerne, danke! Haben Sie eine Visitenkarte?",
+                translation: "Graag, bedankt! Heeft u een visitekaartje?"
+            },
+            {
+                speaker: "user",
+                translation: "Natuurlijk, hier is mijn visitekaartje.",
+                expected: ["natürlich", "hier", "Visitenkarte"],
+                hint: "Natürlich, hier ist meine Visitenkarte.",
+            }
+        ]
+    },
+    {
+        id: "payment_process",
+        title: "Betalen op de beurs",
+        description: "Handel een verkoop af bij de kassa.",
+        steps: [
+            {
+                speaker: "bot",
+                text: "Ich nehme dieses Häkelset. Kann ich mit Karte bezahlen?",
+                translation: "Ik neem dit haakpakket. Kan ik met kaart betalen?"
+            },
+            {
+                speaker: "user",
+                translation: "Ja, dat kan. Dat is dan twintig euro alstublieft.",
+                expected: ["ja", "möglich", "zwanzig", "Euro", "bitte"],
+                hint: "Ja, das ist möglich. Das macht zwanzig Euro bitte.",
+            },
+            {
+                speaker: "bot",
+                text: "Hier bitte. Bekomme ik een factuur?",
+                translation: "Alstublieft. Krijg ik een factuur?"
+            },
+            {
+                speaker: "user",
+                translation: "Zeker, ik stuur de factuur per e-mail.",
+                expected: ["sicher", "rechnung", "senden", "E-Mail"],
+                hint: "Sicher, ich sende die Rechnung per E-Mail.",
+            }
+        ]
+    },
+    {
+        id: "technical_deepdive",
+        title: "Techniek & Materiaal",
+        description: "Ga dieper in op het materiaal en de steken.",
+        steps: [
+            {
+                speaker: "bot",
+                text: "Ist das Garn aus reiner Baumwolle?",
+                translation: "Is het garen van pure katoen?"
+            },
+            {
+                speaker: "user",
+                translation: "Ja, het is honderd procent katoen en heel zacht.",
+                expected: ["ja", "hundert", "prozent", "Baumwolle", "weich"],
+                hint: "Ja, es ist hundert prozent Baumwolle und sehr weich.",
+            },
+            {
+                speaker: "bot",
+                text: "Muss man sehr fest häkeln für diese Tiere?",
+                translation: "Moet je erg strak haken voor deze dieren?"
+            },
+            {
+                speaker: "user",
+                translation: "Ja, strak haken is belangrijk voor Amigurumi.",
+                expected: ["ja", "fest", "häkeln", "wichtig", "Amigurumi"],
+                hint: "Ja, fest häkeln ist wichtig für Amigurumi.",
             }
         ]
     }

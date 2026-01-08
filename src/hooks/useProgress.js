@@ -42,10 +42,21 @@ export function useProgress() {
         });
     };
 
+    const resetProgress = () => {
+        if (user) {
+            setUser({
+                ...user,
+                score: 0,
+                completedScenarios: []
+            });
+        }
+    };
+
     return {
         user,
         setUserName,
         addScore,
-        completeScenario
+        completeScenario,
+        resetProgress
     };
 }

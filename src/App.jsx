@@ -9,7 +9,13 @@ import { useProgress } from './hooks/useProgress';
 function App() {
   const [view, setView] = useState('scenarios');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, setUserName, addScore, completeScenario } = useProgress();
+  const {
+    user,
+    setUserName,
+    addScore,
+    completeScenario,
+    resetProgress
+  } = useProgress();
 
   const {
     isListening,
@@ -96,6 +102,18 @@ function App() {
                 selectedVoice={selectedVoice}
                 onSelect={setSelectedVoice}
               />
+
+              <button
+                onClick={() => {
+                  if (confirm('Weet je het zeker? Je XP en voortgang worden gewist.')) {
+                    resetProgress();
+                    setIsMenuOpen(false);
+                  }
+                }}
+                className="mt-6 text-[10px] font-bold text-red-400 uppercase tracking-widest hover:text-red-600 transition-colors"
+              >
+                Reset Voortgang
+              </button>
             </div>
             <div className="mt-auto pb-12 text-slate-300 text-xs font-bold uppercase tracking-widest">
               Hallo, {user.name}
