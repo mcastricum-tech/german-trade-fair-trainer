@@ -12,18 +12,18 @@ export default function VocabularyList({ speak }) {
 
     return (
         <div className="max-w-4xl mx-auto pb-24 md:pb-0">
-            <div className="text-center mb-12">
-                <h2 className="text-5xl font-bold text-brand-orange font-display mb-4 tracking-tight">Wortschatz Üben</h2>
-                <p className="text-slate-500 text-lg">Klik op een kaart om de uitspraak te horen 🔊</p>
+            <div className="text-center mb-8 md:mb-12">
+                <h2 className="text-3xl md:text-5xl font-bold text-brand-orange font-display mb-2 md:mb-4 tracking-tight whitespace-nowrap">Wortschatz Üben</h2>
+                <p className="text-slate-500 text-sm md:text-lg">Klik op een kaart om de uitspraak te horen</p>
             </div>
 
             {/* Category Filter */}
-            <div className="flex flex-wrap justify-center gap-3 mb-10 sticky top-20 bg-slate-50/95 p-4 rounded-2xl backdrop-blur-sm z-30 shadow-sm border border-slate-100">
+            <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-10 sticky top-20 bg-slate-50/95 p-2 md:p-4 rounded-2xl backdrop-blur-sm z-30 shadow-sm border border-slate-100">
                 {categoryList.map(cat => (
                     <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
-                        className={`px-5 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 ${selectedCategory === cat.id
+                        className={`px-4 py-2 md:px-5 rounded-full font-bold text-xs md:text-sm transition-all transform hover:scale-105 ${selectedCategory === cat.id
                             ? 'bg-brand-orange text-white shadow-lg ring-2 ring-orange-200'
                             : 'bg-white text-slate-500 hover:text-brand-orange shadow-sm border border-slate-200 hover:border-brand-orange'
                             }`}
@@ -36,27 +36,23 @@ export default function VocabularyList({ speak }) {
             {/* Visual Header for Section */}
             <div className="mb-6 flex items-center gap-4">
                 <div className="h-px bg-slate-200 flex-1"></div>
-                <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                <span className="text-slate-400 font-bold text-[10px] md:text-xs uppercase tracking-widest">
                     {categories[selectedCategory] || 'Alle Woorden'}
                 </span>
                 <div className="h-px bg-slate-200 flex-1"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {filteredWords.map((item, index) => (
                     <div
                         key={index}
-                        onClick={() => speak(item.german)}
+                        onClick={() => speak(item.term)}
                         className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer hover:-translate-y-1 border border-slate-100 group relative overflow-hidden active:scale-95"
                     >
                         <div className="absolute top-0 right-0 w-16 h-16 bg-brand-orange/5 rounded-bl-[3rem] -mr-8 -mt-8 transition-transform group-hover:scale-150" />
 
-                        <p className="text-2xl font-bold text-black group-hover:text-brand-orange mb-2 font-display">{item.german}</p>
-                        <p className="text-slate-500 font-medium">{item.dutch}</p>
-
-                        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-brand-orange">
-                            🔊
-                        </div>
+                        <p className="text-2xl font-bold text-black group-hover:text-brand-orange mb-2 font-display">{item.term}</p>
+                        <p className="text-slate-500 font-medium">{item.translation}</p>
                     </div>
                 ))}
             </div>
