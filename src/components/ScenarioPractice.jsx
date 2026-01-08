@@ -10,7 +10,8 @@ export default function ScenarioPractice({
     speaking,
     completeScenario,
     addScore,
-    user
+    user,
+    error // Receive error
 }) {
     const [activeScenario, setActiveScenario] = useState(null);
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -291,6 +292,12 @@ export default function ScenarioPractice({
                                     <span className="bg-white/10 text-white text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest border border-white/20">Jij bent aan de beurt</span>
                                 </div>
 
+                                {error && (
+                                    <div className="mb-6 bg-red-500/20 border border-red-500/50 p-4 rounded-xl animate-pulse">
+                                        <p className="text-red-200 font-bold text-sm">⚠️ {error}</p>
+                                    </div>
+                                )}
+
                                 {showHint ? (
                                     <div className="mb-10 bg-white/5 p-6 rounded-2xl inline-block max-w-lg">
                                         <p className="text-brand-orange mb-2 text-sm uppercase font-bold tracking-wider">Hint</p>
@@ -319,8 +326,8 @@ export default function ScenarioPractice({
                                     onTouchStart={startListening}
                                     onTouchEnd={stopListening}
                                     className={`w-28 h-28 rounded-full flex items-center justify-center mx-auto transition-all transform ${isListening
-                                            ? 'bg-brand-orange scale-110 shadow-[0_0_30px_rgba(231,64,22,0.6)]'
-                                            : 'bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:scale-105'
+                                        ? 'bg-brand-orange scale-110 shadow-[0_0_30px_rgba(231,64,22,0.6)]'
+                                        : 'bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:scale-105'
                                         }`}
                                 >
                                     <svg className={`w-12 h-12 ${isListening ? 'text-white' : 'text-brand-orange'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

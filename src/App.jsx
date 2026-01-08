@@ -7,63 +7,64 @@ import { useSpeech } from './hooks/useSpeech';
 import { useProgress } from './hooks/useProgress';
 
 function App() {
-  const [view, setView] = useState('scenarios'); // 'vocabulary' | 'scenarios'
+  const [view, setView] = useState('scenarios');
+  const { user, setUserName, addScore, completeScenario } = useProgress();
 
   const {
-    user,
-    setUserName,
-    addScore,
-    completeScenario
-  } = useProgress();
-
-  const {
-    speak,
+    isListening,
+    transcript,
     startListening,
     stopListening,
-    transcript,
-    isListening,
+    speak,
     speaking,
+    supported,
     voices,
     selectedVoice,
-    setSelectedVoice
+    setSelectedVoice,
+    error // Receive error
   } = useSpeech();
-
-  const commonProps = {
-    speak,
-    startListening,
-    stopListening,
-    transcript,
-    isListening,
-    speaking,
-    user,
-    addScore,
-    completeScenario
-  };
 
   if (!user) {
     return <Onboarding onComplete={setUserName} />;
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-brand-orange selection:text-white pb-20">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-800">
       {/* Header */}
-      <header className="bg-white sticky top-0 z-50 border-b border-slate-100">
-        <div className="max-w-6xl mx-auto px-6 h-28 flex items-center justify-between">
-
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center">
           {/* Logo Area */}
-          <div className="flex items-center gap-6">
-            <img src="/logo.png" alt="YarnZoo Logo" className="w-20 h-20 object-contain" />
-            <div className="hidden md:flex flex-col">
-              <h1 className="font-bold text-brand-orange text-3xl md:text-4xl leading-none font-display tracking-tight">Duitse Beurs Trainer</h1>
-              <p className="text-sm md:text-base text-black font-bold tracking-widest uppercase mt-1">Garens & Haken</p>
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="YarnZoo Logo" className="h-10 w-auto" onError={(e) => e.target.style.display = 'none'} />
+            <div className="leading-tight">
+              <h1 className="text-xl md:text-2xl font-bold font-display tracking-tight text-black">
+                Duitse Beurs <span className="text-brand-orange">Trainer</span>
+              </h1>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest hidden sm:block">YarnZoo Academy</p>
             </div>
           </div>
 
+          {/* Nav & Tools */}
           <div className="flex items-center gap-6">
+            <nav className="hidden md:flex gap-1 bg-slate-100 p-1 rounded-full">
+              <button
+                onClick={() => setView('scenarios')}
+                className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${view === 'scenarios' ? 'bg-white text-brand-orange shadow-md' : 'text-slate-500 hover:text-black'}`}
+              >
+                Scenario's
+              </button>
+              <button
+                onClick={() => setView('vocabulary')}
+                className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${view === 'vocabulary' ? 'bg-white text-brand-orange shadow-md' : 'text-slate-500 hover:text-black'}`}
+              >
+                Woorden
+              </button>
+            </nav>
+
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-brand-text">Hallo, <span className="text-brand-orange">{user.name}</span></p>
               <div className="flex items-center justify-end gap-1 text-xs font-bold bg-brand-orange/10 text-brand-orange px-2 py-1 rounded-full mt-1">
-                <svg className="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                <span className="text-lg leading-none">★</span>
                 <span>{user.score} XP</span>
               </div>
             </div>
@@ -71,46 +72,54 @@ function App() {
             <VoiceSelector
               voices={voices}
               selectedVoice={selectedVoice}
-              onVoiceChange={setSelectedVoice}
+              onSelect={setSelectedVoice}
             />
-
-            <nav className="flex gap-2 p-1">
-              <button
-                onClick={() => setView('scenarios')}
-                className={`px-6 py-2 rounded-full text-lg font-display font-bold transition-all ${view === 'scenarios'
-                    ? 'bg-brand-orange text-white shadow-md transform -translate-y-0.5'
-                    : 'text-brand-text hover:text-brand-orange hover:bg-orange-50'
-                  }`}
-              >
-                Start
-              </button>
-              <button
-                onClick={() => setView('vocabulary')}
-                className={`px-6 py-2 rounded-full text-lg font-display font-bold transition-all ${view === 'vocabulary'
-                    ? 'bg-brand-orange text-white shadow-md transform -translate-y-0.5'
-                    : 'text-brand-text hover:text-brand-orange hover:bg-orange-50'
-                  }`}
-              >
-                Woorden
-              </button>
-            </nav>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="py-12 px-4">
-        {view === 'scenarios' ? (
-          <ScenarioPractice {...commonProps} />
+      <main className="flex-1 max-w-5xl mx-auto w-full p-6 md:p-10">
+        {!supported ? (
+          <div className="bg-red-50 text-red-600 p-6 rounded-2xl text-center font-bold border-2 border-red-100">
+            ⚠️ Je browser ondersteunt geen spraakherkenning. Gebruik Google Chrome of Microsoft Edge.
+          </div>
         ) : (
-          <VocabularyList {...commonProps} />
+          view === 'scenarios' ? (
+            <ScenarioPractice
+              speak={speak}
+              startListening={startListening}
+              stopListening={stopListening}
+              transcript={transcript}
+              isListening={isListening}
+              speaking={speaking}
+              completeScenario={completeScenario}
+              addScore={addScore}
+              user={user}
+              error={error} // Pass error prop
+            />
+          ) : (
+            <VocabularyList speak={speak} />
+          )
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t-4 border-black mt-12 py-12 text-center bg-slate-50">
-        <p className="text-brand-text font-display text-2xl">© YarnZoo 2026 - Duitse beurs trainer</p>
-        <p className="text-black font-bold mt-2">Viel Erfolg auf der Messe!</p>
+      {/* Mobile Footer Nav (visible only on small screens) */}
+      <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 flex justify-around shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40">
+        <button
+          onClick={() => setView('scenarios')}
+          className={`flex flex-col items-center gap-1 ${view === 'scenarios' ? 'text-brand-orange' : 'text-slate-400'}`}
+        >
+          <span className="text-2xl">💬</span>
+          <span className="text-xs font-bold uppercase">Scenario's</span>
+        </button>
+        <button
+          onClick={() => setView('vocabulary')}
+          className={`flex flex-col items-center gap-1 ${view === 'vocabulary' ? 'text-brand-orange' : 'text-slate-400'}`}
+        >
+          <span className="text-2xl">📖</span>
+          <span className="text-xs font-bold uppercase">Woorden</span>
+        </button>
       </footer>
     </div>
   );

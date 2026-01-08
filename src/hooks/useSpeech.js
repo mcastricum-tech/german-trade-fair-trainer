@@ -8,6 +8,8 @@ export function useSpeech() {
     const [voices, setVoices] = useState([]);
     const [selectedVoice, setSelectedVoice] = useState(null);
 
+    const [error, setError] = useState(null);
+
     const recognitionRef = useRef(null);
     const synth = window.speechSynthesis;
 
@@ -41,6 +43,7 @@ export function useSpeech() {
     useEffect(() => {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
             setSupported(false);
+            setError("Browser ondersteunt geen spraakherkenning. Gebruik Chrome of Edge.");
             return;
         }
 
@@ -50,7 +53,10 @@ export function useSpeech() {
         recognitionRef.current.interimResults = true;
         recognitionRef.current.lang = 'de-DE';
 
-        recognitionRef.current.onstart = () => setIsListening(true);
+        recognitionRef.current.onstart = () => {
+            setIsListening(true);
+            setError(null);
+        };
         recognitionRef.current.onend = () => setIsListening(false);
 
         recognitionRef.current.onresult = (event) => {
@@ -68,6 +74,24 @@ export function useSpeech() {
         recognitionRef.current.onerror = (event) => {
             console.error('Speech recognition error', event.error);
             setIsListening(false);
+
+            // Map technical error codes to user-friendly messages
+            switch (event.error) {
+                case 'not-allowed':
+                    setError("Geen toegang tot microfoon. Controleer je instellingen.");
+                    break;
+                case 'no-speech':
+                    setError("Geen spraak gedetecteerd. Probeer het opnieuw.");
+                    break;
+                case 'network':
+                    setError("Netwerkfout. Controleer je internetverbinding.");
+                    break;
+                case 'audio-capture':
+                    setError("Microfoon niet gevonden.");
+                    break;
+                default:
+                    setError(`Fout bij spraakherkenning: ${event.error}`);
+            }
         };
 
         return () => {
@@ -98,11 +122,13 @@ export function useSpeech() {
 
     const startListening = useCallback(() => {
         setTranscript('');
+        setError(null);
         if (recognitionRef.current) {
             try {
                 recognitionRef.current.start();
             } catch (e) {
                 console.error("Error starting recognition:", e);
+                // Usually means it's already started, just ignore
             }
         }
     }, []);
@@ -123,6 +149,7 @@ export function useSpeech() {
         supported,
         voices,
         selectedVoice,
-        setSelectedVoice
+        setSelectedVoice,
+        error // Export error state
     };
 }
