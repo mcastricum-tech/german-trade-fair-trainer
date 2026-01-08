@@ -37,12 +37,12 @@ export default function ScenarioPractice({
         }
     }, [activeScenario, currentStepIndex, speak]);
 
-    // Check user answer
+    // Check user answer ONLY after they stop speaking
     useEffect(() => {
-        if (!activeScenario) return;
-        const step = activeScenario.steps[currentStepIndex];
+        if (!activeScenario || isListening || !transcript || feedback === 'correct') return;
 
-        if (step.speaker === 'user' && transcript && feedback !== 'correct') {
+        const step = activeScenario.steps[currentStepIndex];
+        if (step.speaker === 'user') {
             const matches = step.expected.some(word =>
                 transcript.toLowerCase().includes(word.toLowerCase())
             );
@@ -53,26 +53,15 @@ export default function ScenarioPractice({
                 const timeout = setTimeout(() => {
                     setFeedback(null);
                     nextStep();
-                }, 800);
+                }, 1000);
                 return () => clearTimeout(timeout);
+            } else {
+                setFeedback('incorrect');
             }
         }
-    }, [transcript, activeScenario, currentStepIndex, feedback, addScore]);
+    }, [isListening, transcript, activeScenario, currentStepIndex, feedback, addScore]);
 
-    // Handle "Not Recognized" state when listening ends
-    useEffect(() => {
-        if (!isListening && transcript && feedback !== 'correct') {
-            const step = activeScenario?.steps[currentStepIndex];
-            if (step?.speaker === 'user') {
-                const matches = step.expected.some(word =>
-                    transcript.toLowerCase().includes(word.toLowerCase())
-                );
-                if (!matches) {
-                    setFeedback('incorrect');
-                }
-            }
-        }
-    }, [isListening, transcript, feedback, activeScenario, currentStepIndex]);
+    // Cleanup: don't need the second useEffect for incorrect state anymore as it's merged above
 
     const nextStep = () => {
         if (currentStepIndex < activeScenario.steps.length - 1) {
@@ -242,14 +231,8 @@ export default function ScenarioPractice({
                 {/* Bot Message or Context */}
                 {currentStep.speaker === 'bot' && (
                     <div className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center relative overflow-hidden ring-1 ring-slate-100">
-                        {/* Minimalist pulse indicator */}
-                        {speaking && (
-                            <div className="absolute top-6 right-6 flex gap-1">
-                                <div className="w-2 h-2 bg-brand-orange rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                <div className="w-2 h-2 bg-brand-orange rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                                <div className="w-2 h-2 bg-brand-orange rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                            </div>
-                        )}
+                        {/* Removed bouncing dots as they looked strange */}
+
 
                         <p className="text-2xl md:text-5xl font-bold text-black mb-4 md:mb-6 font-display leading-tight">"{currentStep.text}"</p>
                         <p className="text-slate-500 text-lg md:text-xl font-medium mb-8 md:mb-10">{currentStep.translation}</p>
@@ -334,7 +317,7 @@ export default function ScenarioPractice({
 
                                 <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28">
                                     {isListening && (
-                                        <div className="absolute inset-0 bg-black/20 rounded-full animate-ping pointer-events-none" />
+                                        <div className="absolute inset-0 bg-black/10 rounded-full animate-ping pointer-events-none" />
                                     )}
                                     <button
                                         onMouseDown={handleStartListening}
@@ -343,11 +326,11 @@ export default function ScenarioPractice({
                                         onTouchStart={(e) => { e.preventDefault(); handleStartListening(); }}
                                         onTouchEnd={(e) => { e.preventDefault(); stopListening(); }}
                                         className={`w-full h-full rounded-full flex items-center justify-center transition-all transform z-10 relative ${isListening
-                                            ? 'bg-black scale-110 shadow-[0_0_40px_rgba(0,0,0,0.4)]'
-                                            : 'bg-black/10 hover:bg-black/20 border-2 border-black/10 hover:scale-105'
+                                            ? 'bg-black scale-110 shadow-lg'
+                                            : 'bg-white shadow-md hover:scale-105'
                                             }`}
                                     >
-                                        <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-brand-orange' : 'text-black'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className={`w-10 h-10 md:w-12 md:h-12 ${isListening ? 'text-brand-orange' : 'text-brand-orange'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                         </svg>
                                     </button>

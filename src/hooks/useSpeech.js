@@ -25,11 +25,11 @@ export function useSpeech() {
             // Smart default: prioritize "Google", "Microsoft", or "Natural"
             // Only set output if no voice is currently selected or if the currently selected one is not available
             if (germanVoices.length > 0 && !selectedVoice) {
-                const preferred = germanVoices.find(v =>
-                    v.name.includes('Google') ||
-                    v.name.includes('Neural') ||
-                    v.name.includes('Natural')
-                );
+                // Better prioritization: Search for 'Google Deutsch' first, then 'Neural', then any Google, then first available
+                const preferred = germanVoices.find(v => v.name === 'Google Deutsch') ||
+                    germanVoices.find(v => v.name.includes('Neural')) ||
+                    germanVoices.find(v => v.name.includes('Google'));
+
                 setSelectedVoice(preferred || germanVoices[0]);
             }
         };
