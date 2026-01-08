@@ -150,60 +150,53 @@ export default function ScenarioPractice({
     const currentStep = activeScenario.steps[currentStepIndex];
 
     return (
-        <div className="min-h-[80vh] flex flex-col items-center justify-start py-4 animate-in fade-in duration-500">
+        <div className="min-h-[85vh] flex flex-col items-center justify-start py-2 animate-in fade-in duration-500">
             <div className="w-full max-w-lg">
-                <button
-                    onClick={() => setActiveScenario(null)}
-                    className="text-slate-400 font-bold text-sm uppercase tracking-widest mb-8 flex items-center gap-2 hover:text-slate-600 transition-colors"
-                >
-                    &larr; Stoppen
-                </button>
-
-                <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden min-h-[550px] flex flex-col items-center p-8 md:p-12 text-center">
+                <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden min-h-[500px] flex flex-col items-center p-8 md:p-10 text-center relative">
 
                     {/* Bot Segment - Always visible once it happened */}
-                    <div className="mb-12 w-full">
-                        <p className="text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-3">Buddy spreekt:</p>
-                        <h2 className="text-3xl md:text-4xl font-bold text-black mb-2 font-display leading-tight">
+                    <div className="mb-6 w-full">
+                        <p className="text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-2">Buddy spreekt:</p>
+                        <h2 className="text-2xl md:text-3xl font-bold text-black mb-1 font-display leading-tight">
                             "{currentStep.speaker === 'bot' ? currentStep.text : (activeScenario.steps[currentStepIndex - 1]?.text || '...')}"
                         </h2>
-                        <p className="text-slate-400 text-lg">
+                        <p className="text-slate-400 text-base md:text-lg">
                             {currentStep.speaker === 'bot' ? currentStep.translation : (activeScenario.steps[currentStepIndex - 1]?.translation || '')}
                         </p>
                     </div>
 
-                    <div className="w-full h-px bg-slate-50 mb-12" />
+                    <div className="w-full h-px bg-slate-50 mb-6" />
 
                     {/* User Action Segment */}
                     <div className="flex-1 w-full flex flex-col items-center justify-center">
                         {currentStep.speaker === 'user' ? (
                             feedback === 'correct' ? (
-                                <div className="space-y-6 py-8">
-                                    <h3 className="text-5xl font-bold text-brand-orange animate-bounce">Richtig! ✓</h3>
-                                    <p className="text-slate-400 font-bold text-xl">+10 XP</p>
+                                <div className="space-y-4 py-6">
+                                    <h3 className="text-4xl font-bold text-brand-orange animate-bounce">Richtig! ✓</h3>
+                                    <p className="text-slate-400 font-bold text-lg">+10 XP</p>
                                     <button
                                         onClick={nextStep}
-                                        className="px-12 py-4 bg-brand-orange text-white rounded-full font-bold text-xl shadow-lg hover:scale-110 active:scale-95 transition-all"
+                                        className="px-10 py-3 bg-brand-orange text-white rounded-full font-bold text-lg shadow-lg hover:scale-110 active:scale-95 transition-all"
                                     >
                                         Volgende →
                                     </button>
                                 </div>
                             ) : (
                                 <>
-                                    <div className="mb-8">
-                                        <p className="text-black text-xl md:text-2xl font-bold mb-2">Spreek dit na:</p>
-                                        <p className="text-brand-orange text-2xl md:text-3xl font-bold">"{currentStep.hint}"</p>
+                                    <div className="mb-6">
+                                        <p className="text-black text-lg md:text-xl font-bold mb-2">Spreek dit na:</p>
+                                        <p className="text-brand-orange text-xl md:text-2xl font-bold">"{currentStep.hint}"</p>
                                     </div>
 
-                                    <div className="min-h-[60px] mb-8 bg-slate-50 w-full rounded-2xl p-4 flex items-center justify-center">
+                                    <div className="min-h-[50px] mb-6 bg-slate-50 w-full rounded-2xl p-4 flex items-center justify-center">
                                         {transcript ? (
-                                            <p className="text-black text-xl font-bold italic">"{transcript}"</p>
+                                            <p className="text-black text-lg font-bold italic">"{transcript}"</p>
                                         ) : (
                                             <p className="text-slate-400 italic text-sm">Houd microfoon ingedrukt en spreek...</p>
                                         )}
                                     </div>
 
-                                    <div className="relative mb-6">
+                                    <div className="relative mb-4">
                                         {isListening && <div className="absolute inset-0 bg-brand-orange/20 rounded-full animate-ping" />}
                                         <button
                                             onMouseDown={handleStartListening}
@@ -211,30 +204,38 @@ export default function ScenarioPractice({
                                             onMouseLeave={stopListening}
                                             onTouchStart={(e) => { e.preventDefault(); handleStartListening(); }}
                                             onTouchEnd={(e) => { e.preventDefault(); stopListening(); }}
-                                            className={`w-24 h-24 rounded-full flex items-center justify-center transition-all transform shadow-xl relative z-10 ${isListening ? 'bg-brand-orange scale-110' : 'bg-white border-2 border-slate-100 hover:border-brand-orange'}`}
+                                            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all transform shadow-xl relative z-10 ${isListening ? 'bg-brand-orange scale-110' : 'bg-white border-2 border-slate-100 hover:border-brand-orange'}`}
                                         >
-                                            <svg className={`w-10 h-10 ${isListening ? 'text-white' : 'text-brand-orange'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className={`w-8 h-8 ${isListening ? 'text-white' : 'text-brand-orange'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                             </svg>
                                         </button>
                                     </div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">Houd ingedrukt om te spreken</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Houd ingedrukt om te spreken</p>
 
                                     <button
                                         onClick={nextStep}
-                                        className="text-slate-300 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest transition-colors pb-4"
+                                        className="text-slate-300 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest transition-colors mb-4"
                                     >
                                         Overslaan &rarr;
                                     </button>
                                 </>
                             )
                         ) : (
-                            <div className="py-12 flex flex-col items-center">
-                                <div className="w-12 h-12 border-4 border-brand-orange/20 border-t-brand-orange rounded-full animate-spin mb-4"></div>
-                                <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">Luisteren naar Buddy...</p>
+                            <div className="py-8 flex flex-col items-center">
+                                <div className="w-10 h-10 border-4 border-brand-orange/20 border-t-brand-orange rounded-full animate-spin mb-4"></div>
+                                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Luisteren naar Buddy...</p>
                             </div>
                         )}
                     </div>
+
+                    {/* Stoppen button moved to bottom */}
+                    <button
+                        onClick={() => setActiveScenario(null)}
+                        className="mt-4 text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:text-slate-500 transition-colors"
+                    >
+                        &larr; Stoppen
+                    </button>
                 </div>
             </div>
         </div>
