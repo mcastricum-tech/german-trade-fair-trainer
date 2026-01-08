@@ -134,31 +134,7 @@ export default function ScenarioPractice({
         setShowHint(false);
     };
 
-    if (drillSetup) {
-        return (
-            <div className="max-w-2xl mx-auto text-center">
-                <h2 className="text-4xl font-bold text-brand-orange font-display mb-8">Hoeveel vragen?</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[3, 5, 10].map(num => (
-                        <button
-                            key={num}
-                            onClick={() => startDrill(num)}
-                            className="bg-white p-8 rounded-[2rem] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border-2 border-transparent hover:border-brand-orange group"
-                        >
-                            <span className="block text-6xl font-bold text-brand-text group-hover:text-brand-orange mb-2">{num}</span>
-                            <span className="text-slate-400 font-bold uppercase tracking-widest">Vragen</span>
-                        </button>
-                    ))}
-                </div>
-                <button
-                    onClick={() => setDrillSetup(false)}
-                    className="mt-12 text-slate-500 font-bold hover:text-black underline"
-                >
-                    Annuleren
-                </button>
-            </div>
-        );
-    }
+
 
     if (!activeScenario) {
         return (
@@ -167,21 +143,27 @@ export default function ScenarioPractice({
 
                 {/* Drill Mode Card */}
                 <div className="mb-12">
-                    <div
-                        onClick={() => setDrillSetup(true)}
-                        className="bg-brand-orange text-white rounded-[2rem] p-10 shadow-lg hover:shadow-2xl transition-all cursor-pointer hover:-translate-y-1 duration-300 relative overflow-hidden group"
-                    >
-                        <div className="flex justify-between items-center relative z-10">
-                            <div>
-                                <h3 className="text-4xl font-bold font-display mb-2">⚡️ Snel Oefenen</h3>
-                                <p className="text-orange-100 text-lg font-medium">Kies zelf hoeveel vragen je wilt doen.</p>
-                            </div>
-                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl font-bold">
-                                ?
+                    <div className="bg-brand-orange text-white rounded-[2rem] p-8 md:p-10 shadow-lg relative overflow-hidden ring-4 ring-orange-100">
+                        <div className="relative z-10">
+                            <h3 className="text-3xl md:text-4xl font-bold font-display mb-2">⚡️ Snel Oefenen</h3>
+                            <p className="text-orange-100 text-lg font-medium mb-6">Kies direct een aantal vragen:</p>
+
+                            <div className="flex flex-wrap gap-3">
+                                {[3, 5, 10].map(num => (
+                                    <button
+                                        key={num}
+                                        onClick={(e) => { e.stopPropagation(); startDrill(num); }}
+                                        className="bg-white text-brand-orange font-bold text-lg md:text-xl py-3 px-6 rounded-full hover:bg-orange-50 hover:scale-105 transition-all shadow-md active:scale-95"
+                                    >
+                                        {num} Vragen
+                                    </button>
+                                ))}
                             </div>
                         </div>
+
                         {/* Decorative background shapes */}
-                        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+                        <div className="absolute top-10 right-10 text-9xl opacity-10 font-display rotate-12 pointer-events-none">?</div>
                     </div>
                 </div>
 
