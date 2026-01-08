@@ -148,14 +148,15 @@ export default function ScenarioPractice({
                             <h3 className="text-3xl md:text-4xl font-bold font-display mb-2">⚡️ Snel Oefenen</h3>
                             <p className="text-orange-100 text-lg font-medium mb-6">Kies direct een aantal vragen:</p>
 
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex gap-4">
                                 {[3, 5, 10].map(num => (
                                     <button
                                         key={num}
                                         onClick={(e) => { e.stopPropagation(); startDrill(num); }}
-                                        className="bg-white text-brand-orange font-bold text-lg md:text-xl py-3 px-6 rounded-full hover:bg-orange-50 hover:scale-105 transition-all shadow-md active:scale-95"
+                                        className="w-14 h-14 md:w-16 md:h-16 bg-white text-brand-orange font-bold text-xl md:text-2xl rounded-full hover:bg-orange-50 hover:scale-110 transition-all shadow-md active:scale-95 flex items-center justify-center font-display"
+                                        aria-label={`${num} vragen`}
                                     >
-                                        {num} Vragen
+                                        {num}
                                     </button>
                                 ))}
                             </div>
