@@ -14,7 +14,9 @@ function App() {
     setUserName,
     addScore,
     completeScenario,
-    resetProgress
+    resetProgress,
+    mastery,
+    recordAttempt
   } = useProgress();
 
   const {
@@ -143,6 +145,8 @@ function App() {
               user={user}
               resetTranscript={resetTranscript}
               error={error}
+              mastery={mastery}
+              recordAttempt={recordAttempt}
             />
           ) : (
             <VocabularyList speak={speak} />

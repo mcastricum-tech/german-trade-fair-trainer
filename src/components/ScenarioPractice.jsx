@@ -12,7 +12,9 @@ export default function ScenarioPractice({
     addScore,
     user,
     resetTranscript,
-    error
+    error,
+    mastery,
+    recordAttempt
 }) {
     const [activeScenario, setActiveScenario] = useState(null);
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -27,7 +29,7 @@ export default function ScenarioPractice({
                     speak(step.text);
                 }, 300);
 
-                // Auto-advance to the user part (which in this new UI is basically enabling the mic for the same text)
+                // Auto-advance to the user part
                 const advanceTimeout = setTimeout(() => {
                     if (currentStepIndex < activeScenario.steps.length - 1 && activeScenario.steps[currentStepIndex + 1].speaker === 'user') {
                         setCurrentStepIndex(prev => prev + 1);
@@ -54,24 +56,64 @@ export default function ScenarioPractice({
                 const keywords = currentStep.expected || [];
                 const matchedKeywords = keywords.filter(kw => normalizedTranscript.includes(kw.toLowerCase()));
 
+                // Generate unique step ID for tracking
+                const stepId = `${activeScenario.id}:${currentStep.originalIdx || currentStepIndex}`;
+
                 if (normalizedTranscript.includes(expected) || matchedKeywords.length >= Math.ceil(keywords.length / 2)) {
                     setFeedback('correct');
                     addScore(10);
+                    recordAttempt(stepId, true);
                 } else {
                     setFeedback('incorrect');
+                    recordAttempt(stepId, false);
                 }
             }
         }
     }, [isListening, transcript]);
 
     const startDrill = (count) => {
+        // Collect all possible user steps
         const allUserSteps = scenarios.flatMap(s =>
             s.steps
-                .map((step, idx) => ({ ...step, parentScenario: s, originalIdx: idx }))
+                .map((step, idx) => ({ ...step, scenarioId: s.id, originalIdx: idx, parentScenario: s }))
                 .filter(step => step.speaker === 'user')
         );
-        const shuffled = [...allUserSteps].sort(() => 0.5 - Math.random());
-        const drillSteps = shuffled.slice(0, count).flatMap(step => [
+
+        // Weighted random selection based on mastery
+        const weightedPool = [];
+        allUserSteps.forEach(step => {
+            const stepId = `${step.scenarioId}:${step.originalIdx}`;
+            const m = mastery[stepId] || { score: 0 };
+
+            let weight = 10; // Default: Never seen
+            if (m.score > 80) weight = 1; // Mastered
+            else if (m.score > 50) weight = 3; // Learning
+            else if (m.score > 0) weight = 7; // Struggling
+
+            // Add to pool based on weight
+            for (let i = 0; i < weight; i++) {
+                weightedPool.push(step);
+            }
+        });
+
+        // Pick 'count' unique steps from the weighted pool
+        const selectedSteps = [];
+        const usedIds = new Set();
+
+        while (selectedSteps.length < count && weightedPool.length > 0) {
+            const randomIndex = Math.floor(Math.random() * weightedPool.length);
+            const step = weightedPool[randomIndex];
+            const stepId = `${step.scenarioId}:${step.originalIdx}`;
+
+            if (!usedIds.has(stepId)) {
+                selectedSteps.push(step);
+                usedIds.add(stepId);
+            }
+            // Remove all instances of this step from the pool to avoid duplicates
+            weightedPool.filter(s => `${s.scenarioId}:${s.originalIdx}` !== stepId);
+        }
+
+        const drillSteps = selectedSteps.flatMap(step => [
             {
                 speaker: 'bot',
                 text: step.parentScenario.steps[step.originalIdx - 1]?.text || "Spreek na:",
@@ -83,7 +125,7 @@ export default function ScenarioPractice({
 
         setActiveScenario({
             id: 'drill',
-            title: `Snel Oefenen (${count})`,
+            title: `Smart Oefenen (${count})`,
             steps: drillSteps
         });
         setCurrentStepIndex(0);
@@ -111,8 +153,9 @@ export default function ScenarioPractice({
         return (
             <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-500">
                 <div className="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100 text-center">
-                    <p className="text-brand-orange text-xs font-bold uppercase tracking-widest mb-2">Direct Aan de Slag</p>
-                    <h3 className="text-3xl font-bold mb-6 font-display">Snel Oefenen</h3>
+                    <p className="text-brand-orange text-xs font-bold uppercase tracking-widest mb-2">Jouw Personal Trainer</p>
+                    <h3 className="text-3xl font-bold mb-4 font-display">Smart Oefenen</h3>
+                    <p className="text-slate-500 text-sm mb-6">De app kiest automatisch zinnen die je nog niet goed kent.</p>
                     <div className="flex justify-center gap-4">
                         {[5, 10, 15].map(num => (
                             <button
@@ -229,7 +272,7 @@ export default function ScenarioPractice({
                         )}
                     </div>
 
-                    {/* Stoppen button moved to bottom */}
+                    {/* Stoppen button */}
                     <button
                         onClick={() => setActiveScenario(null)}
                         className="mt-4 text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:text-slate-500 transition-colors"
