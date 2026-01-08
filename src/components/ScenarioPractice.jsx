@@ -249,12 +249,14 @@ export default function ScenarioPractice({
                     <div className="flex flex-col items-center">
                         <div className={`transition-all duration-500 w-full ${currentStep.speaker === 'bot' ? 'opacity-100 scale-100' : 'opacity-40 scale-90 mb-4'}`}>
                             <p className="text-brand-orange text-[10px] md:text-xs font-bold uppercase tracking-widest mb-2">Buddy spreekt:</p>
-                            <p className={`font-bold font-display leading-tight mb-2 ${currentStep.speaker === 'bot' ? 'text-2xl md:text-5xl text-black' : 'text-xl md:text-2xl text-white'}`}>
+                            <p className={`font-bold font-display leading-tight ${currentStep.speaker === 'bot' ? 'text-2xl md:text-5xl text-black mb-2' : 'text-xl md:text-2xl text-white opacity-60'}`}>
                                 "{currentStep.speaker === 'bot' ? currentStep.text : (activeScenario.steps[currentStepIndex - 1]?.text || '...')}"
                             </p>
-                            <p className={`font-medium ${currentStep.speaker === 'bot' ? 'text-slate-500 text-lg md:text-xl' : 'text-white/60 text-sm md:text-base'}`}>
-                                {currentStep.speaker === 'bot' ? currentStep.translation : (activeScenario.steps[currentStepIndex - 1]?.translation || '')}
-                            </p>
+                            {currentStep.speaker === 'bot' && (
+                                <p className="font-medium text-slate-500 text-lg md:text-xl">
+                                    {currentStep.translation}
+                                </p>
+                            )}
 
                             {currentStep.speaker === 'user' && (
                                 <button
@@ -290,9 +292,9 @@ export default function ScenarioPractice({
                         ) : (
                             <>
                                 <div className="mb-6 flex flex-col items-center gap-2">
-                                    <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Jouw beurt</span>
+                                    <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Vertaal naar het Duits:</span>
                                     {currentStep.speaker === 'user' && currentStep.translation && (
-                                        <p className="text-white text-xl md:text-3xl font-bold mt-2">"{currentStep.translation}"</p>
+                                        <p className="text-white text-2xl md:text-4xl font-bold mt-2 leading-tight">"{currentStep.translation}"</p>
                                     )}
                                 </div>
 
@@ -320,11 +322,16 @@ export default function ScenarioPractice({
                                     </button>
                                 )}
 
-                                <div className="min-h-[40px] mb-6">
+                                <div className="min-h-[80px] mb-6 flex flex-col items-center justify-center">
                                     {transcript ? (
-                                        <p className="text-white text-xl md:text-2xl font-bold italic">"{transcript}"</p>
+                                        <div className="bg-white px-6 py-3 rounded-2xl shadow-lg transform -rotate-1">
+                                            <p className="text-black text-lg md:text-2xl font-bold italic">"{transcript}"</p>
+                                            {feedback === 'incorrect' && (
+                                                <p className="text-red-600 font-bold text-xs mt-1 animate-bounce">Nog niet helemaal goed...</p>
+                                            )}
+                                        </div>
                                     ) : (
-                                        <p className="text-white/30 italic text-sm">Houd microfoon ingedrukt...</p>
+                                        <p className="text-white/30 italic text-sm">Houd microfoon ingedrukt en spreek...</p>
                                     )}
                                 </div>
 
