@@ -64,6 +64,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "Hartelijk welkom bij onze stand!",
                 expected: ["willkommen", "stand", "danke", "hallo"],
                 hint: "Herzlich willkommen an unserem Stand!",
             },
@@ -74,6 +75,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "Ja natuurlijk, hier zijn ze.",
                 expected: ["ja", "natürlich", "haben", "hier"],
                 hint: "Ja natürlich, hier sind sie.",
             }
@@ -91,6 +93,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "Het zijn de meest unieke dieren ter wereld.",
                 expected: ["Tiere", "Welt", "einzigartig", "Amigurumi"],
                 hint: "Es sind die einzigartigsten Tiere der Welt.",
             },
@@ -101,6 +104,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "Dat is mozaïek-haken.",
                 expected: ["Mosaik", "Häkeln", "Technik"],
                 hint: "Das ist Mosaik-Häkeln.",
             }
@@ -118,6 +122,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "Ik beveel de set 'Boerin en kippen' aan.",
                 expected: ["Set", "Bäuerin", "Hühner", "beliebt", "empfehlen"],
                 hint: "Ich empfehle das Set Bäuerin und Hühner.",
             },
@@ -128,6 +133,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "Nee, de handleiding is heel duidelijk.",
                 expected: ["nein", "Anleitung", "einfach", "klar"],
                 hint: "Nein, die Anleitung ist sehr klar.",
             }
@@ -145,6 +151,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "Ja, dat hangt af van de hoeveelheid.",
                 expected: ["ja", "Menge", "abhängig", "Rabatt"],
                 hint: "Ja, das hängt von der Menge ab.",
             },
@@ -155,6 +162,7 @@ export const scenarios = [
             },
             {
                 speaker: "user",
+                translation: "We kunnen binnen een week leveren.",
                 expected: ["Woche", "Tage", "liefern", "schnell"],
                 hint: "Wir können innerhalb einer Woche liefern.",
             }

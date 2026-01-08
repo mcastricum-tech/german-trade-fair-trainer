@@ -64,6 +64,12 @@ export default function ScenarioPractice({
     // Cleanup: don't need the second useEffect for incorrect state anymore as it's merged above
 
     const nextStep = () => {
+        setFeedback(null);
+        // Important: clear transcript when moving to next step
+        // But we can't call it here easily as it's a prop... wait.
+        // The transcript comes from useSpeech. App.jsx should handle the reset if needed.
+        // Actually, startListening in ScenarioPractice already does setTranscript('') (it calls handleStartListening).
+
         if (currentStepIndex < activeScenario.steps.length - 1) {
             setCurrentStepIndex(prev => prev + 1);
         } else {
@@ -71,8 +77,6 @@ export default function ScenarioPractice({
             if (activeScenario.id !== 'drill') {
                 completeScenario(activeScenario.id);
             }
-            // Instead of blocking alert, we'll just go back to overview
-            // Maybe add a small delay or a completion state later if needed
             setActiveScenario(null);
             setCurrentStepIndex(0);
         }
@@ -261,18 +265,29 @@ export default function ScenarioPractice({
                     <div className="bg-brand-orange p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl md:shadow-2xl text-center text-white relative overflow-hidden">
 
                         {feedback === 'correct' ? (
-                            <div className="py-8 flex flex-col items-center justify-center min-h-[200px]">
-                                <div className="text-4xl md:text-6xl font-bold mb-4 font-display">
-                                    Richtig! ✓
+                            <div className="py-8 flex flex-col items-center justify-center min-h-[250px] gap-6">
+                                <div className="text-center">
+                                    <div className="text-4xl md:text-6xl font-bold mb-4 font-display">
+                                        Richtig! ✓
+                                    </div>
+                                    <p className="text-white/80 font-bold text-xl md:text-2xl">+10 XP</p>
                                 </div>
-                                <p className="text-white/80 font-bold text-xl md:text-2xl">+10 XP</p>
+                                <button
+                                    onClick={nextStep}
+                                    className="px-10 py-4 bg-white text-brand-orange rounded-full font-bold font-display text-xl shadow-xl hover:scale-110 active:scale-95 transition-all"
+                                >
+                                    Volgende →
+                                </button>
                             </div>
                         ) : (
                             <>
                                 {/* If we are in drill mode, allow skipping simply */}
 
-                                <div className="mb-6 md:mb-8">
+                                <div className="mb-6 md:mb-8 flex flex-col items-center gap-2">
                                     <span className="bg-white/10 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white/20">Jij bent aan de beurt</span>
+                                    {currentStep.translation && (
+                                        <p className="text-lg md:text-2xl font-bold mt-2">"{currentStep.translation}"</p>
+                                    )}
                                 </div>
 
                                 {error && (
